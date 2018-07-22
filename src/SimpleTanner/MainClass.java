@@ -108,7 +108,6 @@ public class MainClass extends AbstractScript {
                 } else {
                     // not enough cowhides or gp
                     log("Finished tanning all cowhides!");
-                    this.logStats();
                     stop();
                 }
             } else {
@@ -134,13 +133,6 @@ public class MainClass extends AbstractScript {
                 }
             }
         }
-    }
-
-    private void logStats() {
-        log("Tanned: " + this.totalTanned);
-        log("Time running: " + this.timeRan.formatTime());
-        int tannedPerHour = this.timeRan.getHourlyRate(this.totalTanned);
-        log("Tanned / hr: " + tannedPerHour);
     }
 
     // painting
@@ -176,5 +168,17 @@ public class MainClass extends AbstractScript {
     @Override
     public void onResume() {
         timeRan.setRunTime(this.timeElapsedOnPause);
+    }
+
+    @Override
+    public void onExit() {
+        this.logStats();
+    }
+
+    private void logStats() {
+        log("Tanned: " + this.totalTanned);
+        log("Time running: " + this.timeRan.formatTime());
+        int tannedPerHour = this.timeRan.getHourlyRate(this.totalTanned);
+        log("Tanned / hr: " + tannedPerHour);
     }
 }
