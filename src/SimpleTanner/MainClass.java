@@ -17,10 +17,12 @@ import java.awt.*;
 public class MainClass extends AbstractScript {
 
     private static Area tannerArea = new Area(3271,3191,3277,3193, 0);
+    private static int COWHIDE = 1739;
 
     private boolean scriptStarted = false;
     private int totalTanned = 0;
     private Timer timeRan;
+    private long timeElapsedOnPause = 0;
 
     void setStartScript() {
         this.scriptStarted = true;
@@ -49,7 +51,7 @@ public class MainClass extends AbstractScript {
                     if (item.getAmount() >= 27) {
                         gotCoins = true;
                     }
-                } else if (item.getName().equals("Cowhide")) {
+                } else if (item.getID() == COWHIDE) {
                     gotCowhide = true;
                 }
             }
@@ -94,14 +96,14 @@ public class MainClass extends AbstractScript {
                     getBank().withdrawAll("Coins");
                 }
 
-                Item cowhide = getBank().get("Cowhide");
+                Item cowhide = getBank().get(COWHIDE);
 
                 int cowhideAmount = cowhide == null ? 0 : cowhide.getAmount();
 
                 if (cowhideAmount >= 1 && coins >= cowhideAmount) {
                     // withdraw Cowhide
-                    if (getBank().withdrawAll("Cowhide")) {
-                        sleepUntil(() -> getInventory().contains("Cowhide"), 8000);
+                    if (getBank().withdrawAll(COWHIDE)) {
+                        sleepUntil(() -> getInventory().contains(COWHIDE), 8000);
                     }
                 } else {
                     // not enough cowhides or gp
@@ -126,7 +128,7 @@ public class MainClass extends AbstractScript {
 
                 if (leatherWidget.interact("Tan All")) {
                     // wait for all cowhides to turn into leather
-                    if (sleepUntil(() -> !getInventory().contains("Cowhide"), 8000)) {
+                    if (sleepUntil(() -> !getInventory().contains(COWHIDE), 8000)) {
                         this.totalTanned += 27;
                     }
                 }
@@ -165,5 +167,14 @@ public class MainClass extends AbstractScript {
 
         int tannedPerHour = this.timeRan.getHourlyRate(this.totalTanned);
         g.drawString("Tanned / hr: " + tannedPerHour,9,topOfRect + 55);
+    }
+
+    @Override
+    public void onPause() {
+        this.timeElapsedOnPause = timeRan.elapsed();
+    }
+    @Override
+    public void onResume() {
+        timeRan.setRunTime(this.timeElapsedOnPause);
     }
 }
