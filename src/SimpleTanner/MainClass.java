@@ -143,7 +143,6 @@ public class MainClass extends AbstractScript {
 
     // painting
     private static Font timesNewRoman = new Font("Times new roman", Font.BOLD, 17);
-
     private static Color rectangleColor = new Color(214, 203, 80);
 
     @Override
@@ -160,9 +159,9 @@ public class MainClass extends AbstractScript {
             g.setFont(timesNewRoman);
         }
 
-        g.drawString("Tanned: " + this.totalTanned,9,topOfRect + 20);
+        g.drawString("Tanned: " + this.totalTanned,9,topOfRect + 18);
 
-        g.drawString("Time running: " + this.timeRan.formatTime(),9,topOfRect + 37);
+        g.drawString("Time running: " + this.timeRan.formatTime(),9,topOfRect + 36);
 
         int tannedPerHour = this.timeRan.getHourlyRate(this.totalTanned);
         g.drawString("Tanned / hr: " + tannedPerHour,9,topOfRect + 55);
