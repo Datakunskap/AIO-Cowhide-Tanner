@@ -1,33 +1,43 @@
 package SimpleTanner;
 
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.walking.web.node.impl.bank.WebBankArea;
-import org.dreambot.api.script.ScriptManifest;
-import org.dreambot.api.script.Category;
-import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.utilities.Timer;
-import org.dreambot.api.wrappers.interactive.NPC;
-import org.dreambot.api.wrappers.items.Item;
-import org.dreambot.api.wrappers.widgets.WidgetChild;
+import org.rspeer.runetek.adapter.component.InterfaceComponent;
+import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.adapter.scene.Npc;
+import org.rspeer.runetek.api.commons.BankLocation;
+import org.rspeer.runetek.api.commons.StopWatch;
+import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.component.Bank;
+import org.rspeer.runetek.api.component.Interfaces;
+import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.input.menu.ActionOpcodes;
+import org.rspeer.runetek.api.movement.Movement;
+import org.rspeer.runetek.api.movement.position.Area;
+import org.rspeer.runetek.api.scene.Npcs;
+import org.rspeer.runetek.api.scene.Players;
+import org.rspeer.runetek.event.listeners.RenderListener;
+import org.rspeer.runetek.event.types.RenderEvent;
+import org.rspeer.script.Script;
+import org.rspeer.script.ScriptCategory;
+import org.rspeer.script.ScriptMeta;
+import org.rspeer.ui.Log;
 
-import java.util.List;
 import java.awt.*;
 
-@ScriptManifest(name = "Best Leather Tanner", category = Category.MONEYMAKING, author = "codekiwi", version = 0.9)
-public class MainClass extends AbstractScript {
+@ScriptMeta(name = "Best Leather Tanner", developer = "codekiwi", desc = "", category = ScriptCategory.COMBAT, version = 0.01)
+public class MainClass extends Script implements RenderListener {
 
-    private static Area tannerArea = new Area(3271,3191,3277,3193, 0);
+    private static Area tannerArea = Area.rectangular(3271, 3191, 3277, 3193);
     private static int COWHIDE = 1739;
 
     private boolean scriptStarted = false;
     private int totalTanned = 0;
-    private Timer timeRan;
-    private long timeElapsedOnPause = 0;
+    private StopWatch timeRan;
 
     void setStartScript() {
         this.scriptStarted = true;
-        this.timeRan = new Timer();
+        this.timeRan = StopWatch.start();
     }
+
 
     @Override
     public void onStart() {
@@ -36,7 +46,7 @@ public class MainClass extends AbstractScript {
     }
 
     @Override
-    public int onLoop() {
+    public int loop() {
         if (!this.scriptStarted) {
             return 500;
         }
@@ -44,14 +54,14 @@ public class MainClass extends AbstractScript {
         boolean gotCowhide = false;
         boolean gotCoins = false;
 
-        List<Item> items = getInventory().all();
+        Item[] items = Inventory.getItems();
         for (Item item : items) {
             if (item != null) {
                 if (item.getName().equals("Coins")) {
-                    if (item.getAmount() >= 27) {
+                    if (item.getStackSize() >= 27) {
                         gotCoins = true;
                     }
-                } else if (item.getID() == COWHIDE) {
+                } else if (item.getId() == COWHIDE) {
                     gotCowhide = true;
                 }
             }
@@ -61,74 +71,75 @@ public class MainClass extends AbstractScript {
 
         if (readyToTan) {
             // tanning
-            if(tannerArea.contains(getLocalPlayer())) {
+            if(tannerArea.contains(Players.getLocal())) {
                 this.tanHides();
             } else {
                 // walk to tanner
-                if(getWalking().walk(tannerArea.getRandomTile())) {
-                    sleepUntil(() -> tannerArea.contains(getLocalPlayer()), 2000);
+                if(Movement.walkTo(tannerArea.getCenter().randomize(2))) {
+                    Time.sleepUntil(() -> tannerArea.contains(Players.getLocal()), 3000);
                 }
             }
         } else {
             // banking
-            if(WebBankArea.AL_KHARID.getArea().contains(getLocalPlayer())) {
+            if(BankLocation.AL_KHARID.getPosition().distance(Players.getLocal().getPosition()) <= 3) {
                 this.bankForCowhides();
             } else {
                 // walk to Al Kharid bank
-                if(getWalking().walk(WebBankArea.AL_KHARID.getArea().getRandomTile())) {
-                    sleepUntil(() -> WebBankArea.AL_KHARID.getArea().contains(getLocalPlayer()), 2000);
+                if(Movement.walkTo(BankLocation.AL_KHARID.getPosition())) {
+                    Time.sleepUntil(() -> BankLocation.AL_KHARID.getPosition().distance(Players.getLocal()) <= 3, 2000);
                 }
             }
         }
 
-        return 500;
+        return 600;
     }
 
     private void bankForCowhides() {
-        if (getBank().isOpen()) {
+        if (Bank.isOpen()) {
             // deposit all except money
-            if (getInventory().isEmpty()) {
+            if (Inventory.getCount() == 0) {
                 // check that there is enough cowhides and gp
-                Item coinsInBank = getBank().get(995);
+                Item coinsInBank = Bank.getFirst(995);
                 int coins = 0;
                 if (coinsInBank != null) {
-                    coins = coinsInBank.getAmount();
-                    getBank().withdrawAll("Coins");
+                    coins = coinsInBank.getStackSize();
+                    Bank.withdrawAll("Coins");
+                    Time.sleepUntil(() -> Inventory.contains("Coins"), 2000);
                 }
 
-                Item cowhide = getBank().get(COWHIDE);
+                Item cowhide = Bank.getFirst(COWHIDE);
 
-                int cowhideAmount = cowhide == null ? 0 : cowhide.getAmount();
+                int cowhideAmount = cowhide == null ? 0 : cowhide.getStackSize();
 
                 if (cowhideAmount >= 1 && coins >= cowhideAmount) {
                     // withdraw Cowhide
-                    if (getBank().withdrawAll(COWHIDE)) {
-                        sleepUntil(() -> getInventory().contains(COWHIDE), 8000);
+                    if (Bank.withdrawAll(COWHIDE)) {
+                        Time.sleepUntil(() -> Inventory.contains(COWHIDE), 8000);
                     }
                 } else {
                     // not enough cowhides or gp
-                    log("Finished tanning all cowhides!");
-                    stop();
+                    Log.info("Finished tanning all cowhides!");
+                    setStopping(true);
                 }
             } else {
-                getBank().depositAllItems();
-                sleepUntil(getInventory()::isEmpty, 8000);
+                Bank.depositInventory();
+                Time.sleepUntil(() -> Inventory.getCount() == 0, 8000);
             }
         } else {
-            getBank().open();
+            Bank.open();
         }
     }
 
     private void tanHides() {
-        NPC tanner = getNpcs().closest(3231);
+        Npc tanner = Npcs.getNearest(3231);
         if (tanner.interact("Trade")) {
-            if (sleepUntil(() -> getWidgets().getWidgetChild(324, 148) != null, 8000)) {
-                WidgetChild leatherWidget = getWidgets().getWidgetChild(324, 148);
+            if (Time.sleepUntil(() -> Interfaces.getComponent(324, 124) != null, 8000)) {
+                InterfaceComponent leatherWidget = Interfaces.getComponent(324, 124);
 
-                if (leatherWidget.interact("Tan All")) {
+                if (leatherWidget.interact(ActionOpcodes.INTERFACE_ACTION)) {
                     // wait for all cowhides to turn into leather
-                    if (sleepUntil(() -> !getInventory().contains(COWHIDE), 8000)) {
-                        this.totalTanned += 27;
+                    if (Time.sleepUntil(() -> !Inventory.contains(COWHIDE), 8000)) {
+                        this.totalTanned += Inventory.getCount("Leather");
                     }
                 }
             }
@@ -140,7 +151,8 @@ public class MainClass extends AbstractScript {
     private static Color rectangleColor = new Color(214, 203, 80);
 
     @Override
-    public void onPaint(Graphics g) {
+    public void notify(RenderEvent renderEvent) {
+        Graphics g = renderEvent.getSource();
         int bottomCanvas = 338;
         int rectHeight = 60;
         int topOfRect = bottomCanvas - rectHeight;
@@ -155,30 +167,27 @@ public class MainClass extends AbstractScript {
 
         g.drawString("Tanned: " + this.totalTanned,9,topOfRect + 18);
 
-        g.drawString("Time running: " + this.timeRan.formatTime(),9,topOfRect + 36);
+        if (this.timeRan != null) {
+            g.drawString("Time running: " + this.timeRan.toElapsedString(), 9, topOfRect + 36);
 
-        int tannedPerHour = this.timeRan.getHourlyRate(this.totalTanned);
-        g.drawString("Tanned / hr: " + tannedPerHour,9,topOfRect + 55);
+            int tannedPerHour = getHourlyRate(this.timeRan);
+            g.drawString("Tanned / hr: " + tannedPerHour,9,topOfRect + 55);
+        }
     }
 
     @Override
-    public void onPause() {
-        this.timeElapsedOnPause = timeRan.elapsed();
-    }
-    @Override
-    public void onResume() {
-        timeRan.setRunTime(this.timeElapsedOnPause);
-    }
-
-    @Override
-    public void onExit() {
+    public void onStop() {
         this.logStats();
     }
 
+    private int getHourlyRate(StopWatch sw) {
+        long hours = sw.getElapsed().getSeconds() / 3600;
+        long tannedPerHour = this.totalTanned / hours;
+        return (int) tannedPerHour;
+    }
+
     private void logStats() {
-        log("Tanned: " + this.totalTanned);
-        log("Time running: " + this.timeRan.formatTime());
-        int tannedPerHour = this.timeRan.getHourlyRate(this.totalTanned);
-        log("Tanned / hr: " + tannedPerHour);
+        Log.info("Tanned: " + this.totalTanned);
+        Log.info("Time running: " + this.timeRan.toElapsedString());
     }
 }
