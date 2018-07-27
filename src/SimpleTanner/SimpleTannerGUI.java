@@ -11,9 +11,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 class SimpleTannerGUI extends JFrame {
-    private MainClass ctx;
+    private LeatherTanner ctx;
 
-    SimpleTannerGUI(MainClass main) {
+    SimpleTannerGUI(LeatherTanner main) {
         this.ctx = main;
         ctx.setPaused(true);
         initComponents();
