@@ -6,6 +6,7 @@ import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.StopWatch;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Inventory;
@@ -23,21 +24,14 @@ import org.rspeer.ui.Log;
 
 import java.awt.*;
 
-@ScriptMeta(name = "Best Leather Tanner", developer = "codekiwi", desc = "", category = ScriptCategory.COMBAT, version = 0.01)
+@ScriptMeta(name = "Best Leather Tanner", developer = "codekiwi", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 0.02)
 public class MainClass extends Script implements RenderListener {
 
-    private static Area tannerArea = Area.rectangular(3271, 3191, 3277, 3193);
-    private static int COWHIDE = 1739;
+    private static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
+    private static final int COWHIDE = 1739;
 
-    private boolean scriptStarted = false;
     private int totalTanned = 0;
-    private StopWatch timeRan;
-
-    void setStartScript() {
-        this.scriptStarted = true;
-        this.timeRan = StopWatch.start();
-    }
-
+    StopWatch timeRan = null; // stopwatch is started by GUI
 
     @Override
     public void onStart() {
@@ -47,10 +41,6 @@ public class MainClass extends Script implements RenderListener {
 
     @Override
     public int loop() {
-        if (!this.scriptStarted) {
-            return 500;
-        }
-
         boolean gotCowhide = false;
         boolean gotCoins = false;
 
@@ -71,12 +61,13 @@ public class MainClass extends Script implements RenderListener {
 
         if (readyToTan) {
             // tanning
-            if(tannerArea.contains(Players.getLocal())) {
+            if(TANNER_AREA.contains(Players.getLocal())) {
                 this.tanHides();
             } else {
                 // walk to tanner
-                if(Movement.walkTo(tannerArea.getCenter().randomize(2))) {
-                    Time.sleepUntil(() -> tannerArea.contains(Players.getLocal()), 3000);
+
+                if(Movement.walkTo(TANNER_AREA.getCenter().randomize(Random.low(2, 3)))) {
+                    Time.sleepUntil(() -> TANNER_AREA.contains(Players.getLocal()), Random.mid(2000, 3000));
                 }
             }
         } else {
@@ -86,7 +77,7 @@ public class MainClass extends Script implements RenderListener {
             } else {
                 // walk to Al Kharid bank
                 if(Movement.walkTo(BankLocation.AL_KHARID.getPosition())) {
-                    Time.sleepUntil(() -> BankLocation.AL_KHARID.getPosition().distance(Players.getLocal()) <= 3, 2000);
+                    Time.sleepUntil(() -> BankLocation.AL_KHARID.getPosition().distance(Players.getLocal()) <= 3, Random.mid(1800, 2400));
                 }
             }
         }
@@ -99,12 +90,13 @@ public class MainClass extends Script implements RenderListener {
             // deposit all except money
             if (Inventory.getCount() == 0) {
                 // check that there is enough cowhides and gp
-                Item coinsInBank = Bank.getFirst(995);
+                Item coinsInBank = Bank.getFirst("Coins");
                 int coins = 0;
                 if (coinsInBank != null) {
                     coins = coinsInBank.getStackSize();
                     Bank.withdrawAll("Coins");
                     Time.sleepUntil(() -> Inventory.contains("Coins"), 2000);
+                    Time.sleep(100, 200);
                 }
 
                 Item cowhide = Bank.getFirst(COWHIDE);
@@ -147,8 +139,8 @@ public class MainClass extends Script implements RenderListener {
     }
 
     // painting
-    private static Font timesNewRoman = new Font("Times new roman", Font.BOLD, 17);
-    private static Color rectangleColor = new Color(214, 203, 80);
+    private static final Font timesNewRoman = new Font("Times new roman", Font.BOLD, 17);
+    private static final Color rectangleColor = new Color(214, 203, 80);
 
     @Override
     public void notify(RenderEvent renderEvent) {
@@ -181,13 +173,16 @@ public class MainClass extends Script implements RenderListener {
     }
 
     private int getHourlyRate(StopWatch sw) {
-        long hours = sw.getElapsed().getSeconds() / 3600;
-        long tannedPerHour = this.totalTanned / hours;
+        double hours = sw.getElapsed().getSeconds() / 3600.0;
+        double tannedPerHour = this.totalTanned / hours;
         return (int) tannedPerHour;
     }
 
     private void logStats() {
         Log.info("Tanned: " + this.totalTanned);
-        Log.info("Time running: " + this.timeRan.toElapsedString());
+        if (this.timeRan != null) {
+            Log.info("Time running: " + this.timeRan.toElapsedString());
+            Log.info("Tanned / hr: " + getHourlyRate(this.timeRan));
+        }
     }
 }

@@ -4,6 +4,8 @@
 
 package SimpleTanner;
 
+import org.rspeer.runetek.api.commons.StopWatch;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -13,11 +15,13 @@ class SimpleTannerGUI extends JFrame {
 
     SimpleTannerGUI(MainClass main) {
         this.ctx = main;
+        ctx.setPaused(true);
         initComponents();
     }
 
     private void buttonStartActionPerformed(ActionEvent e) {
-        ctx.setStartScript();
+        ctx.setPaused(false);
+        ctx.timeRan = StopWatch.start();
         this.setVisible(false);
     }
 
@@ -49,7 +53,7 @@ class SimpleTannerGUI extends JFrame {
         buttonStart.setFocusCycleRoot(true);
         buttonStart.setFont(new Font(".SF NS Text", Font.PLAIN, 20));
         buttonStart.setBackground(new Color(57, 67, 54));
-        buttonStart.addActionListener(e -> buttonStartActionPerformed(e));
+        buttonStart.addActionListener(this::buttonStartActionPerformed);
         contentPane.add(buttonStart);
         buttonStart.setBounds(8, 75, 346, 60);
 
