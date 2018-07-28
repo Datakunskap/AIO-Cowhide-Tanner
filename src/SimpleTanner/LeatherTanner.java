@@ -19,7 +19,7 @@ import java.awt.image.ImageObserver;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "Best Leather Tanner", developer = "codekiwi", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 1)
+@ScriptMeta(name = "Best Tanner", developer = "codekiwi", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 1)
 public class LeatherTanner extends TaskScript implements RenderListener, ImageObserver {
     public static final int COWHIDE = 1739;
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
@@ -32,8 +32,8 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
     };
 
     public int totalTanned = 0;
-    private final int leatherPrice = FetchHelper.fetchItemPrice("https://api.rsbuddy.com/grandExchange?a=guidePrice&i=1741", 115);
-    private final int cowhidePrice = FetchHelper.fetchItemPrice("https://api.rsbuddy.com/grandExchange?a=guidePrice&i=1739", 70);
+    private final int leatherPrice = FetchHelper.fetchItemPrice("https://api.rsbuddy.com/grandExchange?a=guidePrice&i=1741", 120);
+    private final int cowhidePrice = FetchHelper.fetchItemPrice("https://api.rsbuddy.com/grandExchange?a=guidePrice&i=1739", 74);
 
     StopWatch timeRan = null; // stopwatch is started by GUI
 

@@ -34,7 +34,7 @@ class SimpleTannerGUI extends JFrame {
 
         //======== this ========
         setBackground(new Color(51, 51, 51));
-        setTitle("Simple Tanner");
+        setTitle("Best Tanner");
         setResizable(false);
         Container contentPane = getContentPane();
         contentPane.setLayout(null);
@@ -53,7 +53,7 @@ class SimpleTannerGUI extends JFrame {
         buttonStart.setFocusCycleRoot(true);
         buttonStart.setFont(new Font(".SF NS Text", Font.PLAIN, 20));
         buttonStart.setBackground(new Color(57, 67, 54));
-        buttonStart.addActionListener(this::buttonStartActionPerformed);
+        buttonStart.addActionListener(e -> buttonStartActionPerformed(e));
         contentPane.add(buttonStart);
         buttonStart.setBounds(8, 75, 346, 60);
 
@@ -68,5 +68,7 @@ class SimpleTannerGUI extends JFrame {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Troy Lamerton
+    private JTextArea textArea1;
+    private JButton buttonStart;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
