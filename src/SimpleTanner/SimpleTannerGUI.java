@@ -68,7 +68,5 @@ class SimpleTannerGUI extends JFrame {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Troy Lamerton
-    private JTextArea textArea1;
-    private JButton buttonStart;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
