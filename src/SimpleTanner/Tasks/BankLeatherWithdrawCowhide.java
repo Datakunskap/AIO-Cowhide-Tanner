@@ -52,7 +52,7 @@ public class BankLeatherWithdrawCowhide extends Task {
             } else {
                 // not enough cowhides or gp
                 Log.info("Finished tanning all cowhides!");
-                this.taskRunner.pauseScript();
+                this.taskRunner.setStopping(true);
             }
         } else {
             Bank.open();

@@ -6,4 +6,4 @@
 * [x] refactor to be a TaskScript
 * [x] more Random
 * [ ] more anti-pattern
-* [ ] put an image in the paint & improve it
+* [x] put an image in the paint & improve it
