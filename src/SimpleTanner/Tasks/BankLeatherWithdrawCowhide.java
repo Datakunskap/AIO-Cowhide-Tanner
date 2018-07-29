@@ -52,6 +52,8 @@ public class BankLeatherWithdrawCowhide extends Task {
             } else {
                 // not enough cowhides or gp
                 Log.info("Finished tanning all cowhides!");
+                int[] debugStats = {coinsAmount, cowhideAmount};
+                Log.info(debugStats);
                 this.taskRunner.setStopping(true);
             }
         } else {

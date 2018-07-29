@@ -19,7 +19,7 @@ public class TanHide extends Task {
 
     @Override
     public boolean validate() {
-        return Conditions.atTanner() && Conditions.gotEnoughCoins() && Conditions.gotCowhide();
+        return Conditions.nearTanner() && Conditions.gotEnoughCoins() && Conditions.gotCowhide();
     }
 
     @Override

@@ -5,23 +5,26 @@ import org.rspeer.ui.Log;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 class FetchHelper {
-    static int fetchItemPrice(String urlString, int fallbackPrice) {
+    static int fetchItemPrice(int itemId, int fallbackPrice) {
         try {
+            String urlString = "https://api.rsbuddy.com/grandExchange?a=guidePrice&i=" + itemId;
             String data = FetchHelper.sendGET(urlString, 4);
-            if (data.startsWith("FAIL")) {
-                throw new Exception("FAILED get request");
+
+            if (data == null) {
+                throw new Exception("FAILED to fetch item price. The RSBuddy API is not responding." + urlString);
             }
             // overall price is the first property in the JSON response
             String overallPrice = data.substring(data.indexOf(":") + 1, data.indexOf(","));
             return Integer.valueOf(overallPrice);
         } catch (Exception e) {
-            Log.severe(e);
+            Log.severe(e.getMessage());
             return fallbackPrice;
         }
     }
@@ -31,6 +34,24 @@ class FetchHelper {
             return ImageIO.read(new URL(url));
         } catch (IOException e){
             return null;
+        }
+    }
+
+    static Font getRunescapeFont(String fallbackFontName) {
+        try {
+            ClassLoader cLoader = LeatherTanner.class.getClassLoader();
+
+            // for some reason, getResourceAsStream(...) throws an exception
+            // if we dont create any temp file beforehand
+            File tmp = File.createTempFile("getResourceAsStream_uses_temp_files", ".tmp");
+            tmp.deleteOnExit();
+
+            String fontpath = "runescape_uf.ttf";
+
+            return Font.createFont(Font.TRUETYPE_FONT, cLoader.getResourceAsStream(fontpath));
+        } catch (Exception e) {
+            Log.severe("Failed to load essential font, please contact the developer");
+            return new Font(fallbackFontName, Font.PLAIN, 24).deriveFont(24f); // sometimes the first size isnt used
         }
     }
 

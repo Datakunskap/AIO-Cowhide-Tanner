@@ -3,6 +3,9 @@
     <output-path>$USER_HOME$/RSPeer/scripts</output-path>
     <root id="archive" name="BotSimpleTanner.jar">
       <element id="module-output" name="BotSimpleTanner" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/out/META-INF/MANIFEST.MF" />
+      </element>
     </root>
   </artifact>
 </component>

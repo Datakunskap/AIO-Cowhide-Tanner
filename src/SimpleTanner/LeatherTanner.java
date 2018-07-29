@@ -16,10 +16,11 @@ import org.rspeer.ui.Log;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "Best Tanner", developer = "codekiwi", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 1)
+@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 1.1)
 public class LeatherTanner extends TaskScript implements RenderListener, ImageObserver {
     public static final int COWHIDE = 1739;
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
@@ -32,8 +33,8 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
     };
 
     public int totalTanned = 0;
-    private final int leatherPrice = FetchHelper.fetchItemPrice("https://api.rsbuddy.com/grandExchange?a=guidePrice&i=1741", 120);
-    private final int cowhidePrice = FetchHelper.fetchItemPrice("https://api.rsbuddy.com/grandExchange?a=guidePrice&i=1739", 74);
+    private final int leatherPrice = FetchHelper.fetchItemPrice(1741, 120);
+    private final int cowhidePrice = FetchHelper.fetchItemPrice(1739, 76);
 
     StopWatch timeRan = null; // stopwatch is started by GUI
 
@@ -74,10 +75,11 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
     }
 
     // painting
-    private static final Font runescapeFont = new Font("RuneScape Small", Font.PLAIN, 24).deriveFont(32f);
-    private static final Font runescapeFontSmaller = new Font("RuneScape Small", Font.PLAIN, 24);
+    private static final Font runescapeFont = FetchHelper.getRunescapeFont("Arial");
+    private static final Font runescapeFontSmall = runescapeFont.deriveFont(22f);
+    private static final Font runescapeFontBigger = runescapeFont.deriveFont(24f);
     private static final DecimalFormat formatNumber = new DecimalFormat("#,###");
-    private static final String imageUrl = "https://i.imgur.com/55MEmwU.png";
+    private static final String imageUrl = "https://i.imgur.com/1qEl73a.png";
     private static final Image image1 = FetchHelper.getImage(imageUrl);
 
     @Override
@@ -93,14 +95,15 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
         g.drawImage(LeatherTanner.image1, 0, 0, this);
 
         // render time running
-        g.setFont(runescapeFontSmaller);
+        g.setFont(runescapeFontSmall);
         this.drawStringWithShadow(
                 g,
                 this.timeRan == null ? "00:00:00" : this.timeRan.toElapsedString(),
-                238,
-                24,
+                241,
+                21,
                 Color.YELLOW.darker()
         );
+
 
         // render tanned and profit
         int[] stats = this.getStats();
@@ -108,11 +111,13 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
         int totalProfit = stats[1];
         int hourlyProfit = stats[2];
 
-        g.setFont(runescapeFont);
+        g.setFont(runescapeFontBigger);
 
-        this.drawStringWithShadow(g, formatNumber.format(totalCowhideTanned), 68 ,229, Color.YELLOW);
-        this.drawStringWithShadow(g, formatNumber.format(totalProfit), 68 ,274, Color.WHITE);
-        this.drawStringWithShadow(g, formatNumber.format(hourlyProfit), 68 ,319, Color.WHITE);
+        int adjustY = -5;
+
+        this.drawStringWithShadow(g, formatNumber.format(totalCowhideTanned), 68 ,229 + adjustY, Color.YELLOW);
+        this.drawStringWithShadow(g, formatNumber.format(totalProfit), 68 ,274 + adjustY, Color.WHITE);
+        this.drawStringWithShadow(g, formatNumber.format(hourlyProfit), 68 ,319 + adjustY, Color.WHITE);
     }
 
     private void drawStringWithShadow(Graphics g, String str, int x, int y, Color color) {

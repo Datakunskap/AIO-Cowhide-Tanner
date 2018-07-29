@@ -11,7 +11,7 @@ public class WalkToTanner extends Task {
     @Override
     public boolean validate() {
         // True if player is far away from the tanner
-        return !Conditions.atTanner() && Conditions.gotCowhide() && Conditions.gotEnoughCoins();
+        return !Conditions.nearTanner() && Conditions.gotCowhide() && Conditions.gotEnoughCoins();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class WalkToTanner extends Task {
         }
         if (WalkingHelper.shouldSetDestination()) {
             if (Movement.walkTo(LeatherTanner.TANNER_AREA.getCenter().randomize(Random.low(1, 2)))) {
-                Time.sleepUntil(Conditions::atTanner, Random.mid(1800, 2400));
+                Time.sleepUntil(Conditions::nearTanner, Random.mid(1800, 2400));
             }
         }
         return 600;

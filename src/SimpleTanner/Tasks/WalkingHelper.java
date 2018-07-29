@@ -3,9 +3,21 @@ package SimpleTanner.Tasks;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.movement.Movement;
+import org.rspeer.runetek.api.scene.Players;
 
 class WalkingHelper {
     static boolean shouldSetDestination() {
+        // small chance to force new destination in case of the rare problem:
+        // having a destination set but player is not moving towards it
+        // I don't trust Players.getLocal().isMoving() for this
+        if (Random.nextInt(1, 100) <= 4) {
+            return true;
+        }
+
+        if (!Players.getLocal().isMoving()) {
+            return true;
+        }
+
         if (!Movement.isDestinationSet()) {
             return true;
         }
@@ -15,11 +27,14 @@ class WalkingHelper {
             return true;
         }
 
-        // don't NEED to set dest. - but sometimes we will for that sweet anti-pattern
-        return  Random.high(1, 10) <= 3;
+        return false;
     }
 
     static boolean shouldEnableRun() {
+        if (Random.nextInt(1, 100) <= 2) {
+            // sometimes I like to random enable run, so my bot should too
+            return true;
+        }
         return !Movement.isRunEnabled() && Movement.getRunEnergy() > Random.nextInt(40, 55);
     }
 

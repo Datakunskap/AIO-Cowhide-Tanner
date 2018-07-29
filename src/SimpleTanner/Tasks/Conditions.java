@@ -16,8 +16,8 @@ class Conditions {
         return coins != null && coins.getStackSize() >= 27;
     }
 
-    static boolean atTanner() {
-        return LeatherTanner.TANNER_AREA.contains(Players.getLocal());
+    static boolean nearTanner() {
+        return LeatherTanner.TANNER_AREA.getCenter().distance(Players.getLocal()) < 10;
     }
 
     static boolean atBank() {
