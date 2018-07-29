@@ -23,6 +23,7 @@ public class BankLeatherWithdrawCowhide extends Task {
     @Override
     public int execute() {
         if (Bank.isOpen()) {
+            Time.sleep(200, 400);
             // deposit all except coins
             Bank.depositAllExcept(995);
             Time.sleepUntil(() -> Inventory.getCount() <= 1, 2000);

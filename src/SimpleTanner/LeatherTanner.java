@@ -16,7 +16,6 @@ import org.rspeer.ui.Log;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
