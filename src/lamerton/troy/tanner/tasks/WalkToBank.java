@@ -1,4 +1,4 @@
-package SimpleTanner.Tasks;
+package lamerton.troy.tanner.tasks;
 
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;

@@ -1,9 +1,9 @@
-package SimpleTanner;
+package lamerton.troy.tanner;
 
-import SimpleTanner.Tasks.BankLeatherWithdrawCowhide;
-import SimpleTanner.Tasks.TanHide;
-import SimpleTanner.Tasks.WalkToBank;
-import SimpleTanner.Tasks.WalkToTanner;
+import lamerton.troy.tanner.tasks.BankLeatherWithdrawCowhide;
+import lamerton.troy.tanner.tasks.TanHide;
+import lamerton.troy.tanner.tasks.WalkToBank;
+import lamerton.troy.tanner.tasks.WalkToTanner;
 import org.rspeer.runetek.api.commons.StopWatch;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.event.listeners.RenderListener;
@@ -13,14 +13,13 @@ import org.rspeer.script.ScriptMeta;
 import org.rspeer.script.task.TaskScript;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
-import sun.jvm.hotspot.utilities.BitMap;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 1.1)
+@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 1.2)
 public class LeatherTanner extends TaskScript implements RenderListener, ImageObserver {
     public static final int COWHIDE = 1739;
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);

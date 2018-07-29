@@ -1,8 +1,4 @@
-/*
- * Created by JFormDesigner on Sat Jul 21 14:43:37 NZST 2018
- */
-
-package SimpleTanner;
+package lamerton.troy.tanner;
 
 import org.rspeer.runetek.api.commons.StopWatch;
 

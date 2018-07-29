@@ -1,6 +1,6 @@
-package SimpleTanner.Tasks;
+package lamerton.troy.tanner.tasks;
 
-import SimpleTanner.LeatherTanner;
+import lamerton.troy.tanner.LeatherTanner;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.Time;

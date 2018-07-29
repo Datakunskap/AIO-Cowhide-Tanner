@@ -1,4 +1,4 @@
-package SimpleTanner;
+package lamerton.troy.tanner;
 
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.ui.Log;

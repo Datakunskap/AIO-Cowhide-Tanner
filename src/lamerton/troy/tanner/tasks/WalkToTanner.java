@@ -1,6 +1,6 @@
-package SimpleTanner.Tasks;
+package lamerton.troy.tanner.tasks;
 
-import SimpleTanner.LeatherTanner;
+import lamerton.troy.tanner.LeatherTanner;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.movement.Movement;
