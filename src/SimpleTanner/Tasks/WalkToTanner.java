@@ -20,7 +20,7 @@ public class WalkToTanner extends Task {
             WalkingHelper.enableRun();
         }
         if (WalkingHelper.shouldSetDestination()) {
-            if (Movement.walkTo(LeatherTanner.TANNER_AREA.getCenter().randomize(Random.low(1, 2)))) {
+            if (Movement.walkToRandomized(LeatherTanner.TANNER_AREA.getCenter())) {
                 Time.sleepUntil(Conditions::nearTanner, Random.mid(1800, 2400));
             }
         }

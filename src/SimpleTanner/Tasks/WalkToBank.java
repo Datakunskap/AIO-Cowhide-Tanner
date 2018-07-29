@@ -20,7 +20,7 @@ public class WalkToBank extends Task {
             WalkingHelper.enableRun();
         }
         if (WalkingHelper.shouldSetDestination()) {
-            if (Movement.walkTo(BankLocation.AL_KHARID.getPosition().randomize(Random.mid(1, 2)))) {
+            if (Movement.walkToRandomized(BankLocation.AL_KHARID.getPosition())) {
                 Time.sleepUntil(Conditions::atBank, Random.mid(1800, 2400));
             }
         }
