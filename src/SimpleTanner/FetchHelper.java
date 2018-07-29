@@ -1,5 +1,6 @@
 package SimpleTanner;
 
+import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.ui.Log;
 
 import javax.imageio.ImageIO;
@@ -74,6 +75,7 @@ class FetchHelper {
         } else {
             Log.info("GET request failed, retrying...");
             if (retriesLeft >= 1) {
+                Time.sleep(200);
                 return FetchHelper.sendGET(getUrl, retriesLeft - 1);
             }
             return null;
