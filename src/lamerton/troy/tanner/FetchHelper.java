@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 class FetchHelper {
     static int fetchItemPrice(int itemId, int fallbackPrice) {
@@ -20,7 +19,7 @@ class FetchHelper {
             String data = FetchHelper.sendGET(urlString, 4);
 
             if (data == null) {
-                throw new Exception("FAILED to fetch item price. The RSBuddy API is not responding." + urlString);
+                throw new Exception("FAILED to fetch item price. The RSBuddy API is not responding.");
             }
             // overall price is the first property in the JSON response
             String overallPrice = data.substring(data.indexOf(":") + 1, data.indexOf(","));
@@ -48,9 +47,8 @@ class FetchHelper {
             tmp.deleteOnExit();
 
             String fontpath = "runescape_uf.ttf";
-            throw new Exception();
 
-//            return Font.createFont(Font.TRUETYPE_FONT, cLoader.getResourceAsStream(fontpath)).deriveFont(20f);
+            return Font.createFont(Font.TRUETYPE_FONT, cLoader.getResourceAsStream(fontpath)).deriveFont(20f);
 
         } catch (Exception e) {
             Log.info("Failed to load awesome font, using fallback font");

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BotSimpleTanner.iml" filepath="$PROJECT_DIR$/BotSimpleTanner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BotBestTanner.iml" filepath="$PROJECT_DIR$/BotBestTanner.iml" />
     </modules>
   </component>
 </project>
