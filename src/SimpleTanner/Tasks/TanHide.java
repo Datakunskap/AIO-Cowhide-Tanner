@@ -25,6 +25,7 @@ public class TanHide extends Task {
     @Override
     public int execute() {
         if (Conditions.tanInterfaceIsOpen()) {
+            Time.sleep(100, 300);
             InterfaceComponent leatherComponent = Interfaces.getComponent(324, 124);
 
             if (leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
