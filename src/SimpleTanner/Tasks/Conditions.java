@@ -3,6 +3,7 @@ package SimpleTanner.Tasks;
 import SimpleTanner.LeatherTanner;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.BankLocation;
+import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.scene.Players;
 
@@ -31,5 +32,9 @@ class Conditions {
 
     static boolean atBank() {
         return BankLocation.AL_KHARID.getPosition().distance(Players.getLocal().getPosition()) < 3;
+    }
+
+    static boolean tanInterfaceIsOpen() {
+        return Interfaces.getComponent(324, 124) != null;
     }
 }

@@ -24,18 +24,19 @@ public class TanHide extends Task {
 
     @Override
     public int execute() {
-        Npc tanner = Npcs.getNearest(3231);
-        if (tanner.interact("Trade")) {
-            if (Time.sleepUntil(() -> Interfaces.getComponent(324, 124) != null, 8000)) {
-                InterfaceComponent leatherComponent = Interfaces.getComponent(324, 124);
+        if (Conditions.tanInterfaceIsOpen()) {
+            InterfaceComponent leatherComponent = Interfaces.getComponent(324, 124);
 
-                if (leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
-                    // wait for all cowhides to turn into leather
-                    if (Time.sleepUntil(() -> !Conditions.gotCowhide(), 8000)) {
-                        taskRunner.totalTanned += Inventory.getCount("Leather");
-                    }
+            if (leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
+                // wait for all cowhides to turn into leather
+                if (Time.sleepUntil(() -> !Conditions.gotCowhide(), 3000)) {
+                    taskRunner.totalTanned += Inventory.getCount("Leather");
                 }
             }
+        } else {
+            Npc tanner = Npcs.getNearest(3231);
+            tanner.interact("Trade");
+            Time.sleepUntil(Conditions::tanInterfaceIsOpen, 4000);
         }
         return 600;
     }
