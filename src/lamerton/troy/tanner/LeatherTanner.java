@@ -76,9 +76,9 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
     }
 
     // painting
-    private static final Font runescapeFont = FetchHelper.getRunescapeFont("Arial");
-    private static final Font runescapeFontSmall = runescapeFont.deriveFont(22f);
-    private static final Font runescapeFontBigger = runescapeFont.deriveFont(24f);
+    private static final Font runescapeFont = FetchHelper.getRunescapeFont();
+    private static final Font runescapeFontSmall = runescapeFont.deriveFont(runescapeFont.getSize2D() + 2f);
+    private static final Font runescapeFontBigger = runescapeFont.deriveFont(runescapeFont.getSize2D() + 5f);
     private static final DecimalFormat formatNumber = new DecimalFormat("#,###");
     private static final String imageUrl = "https://i.imgur.com/1qEl73a.png";
     private static final Image image1 = FetchHelper.getImage(imageUrl);
@@ -100,7 +100,7 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
         this.drawStringWithShadow(
                 g,
                 this.timeRan == null ? "00:00:00" : this.timeRan.toElapsedString(),
-                241,
+                242,
                 21,
                 Color.YELLOW.darker()
         );

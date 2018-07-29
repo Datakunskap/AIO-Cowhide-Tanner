@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 class FetchHelper {
     static int fetchItemPrice(int itemId, int fallbackPrice) {
@@ -38,22 +39,22 @@ class FetchHelper {
         }
     }
 
-    static Font getRunescapeFont(String fallbackFontName) {
+    static Font getRunescapeFont() {
         try {
             ClassLoader cLoader = FetchHelper.class.getClassLoader();
-
             // for some reason, getResourceAsStream(...) throws an exception
             // if we dont create any temp file beforehand
-            File tmp = File.createTempFile("getResourceAsStream_uses_temp_files", ".tmp");
+            File tmp = File.createTempFile("getResourceAsStream_uses_temp_files1", ".tmp");
             tmp.deleteOnExit();
 
             String fontpath = "runescape_uf.ttf";
+            throw new Exception();
 
-            return Font.createFont(Font.TRUETYPE_FONT, cLoader.getResourceAsStream(fontpath));
+//            return Font.createFont(Font.TRUETYPE_FONT, cLoader.getResourceAsStream(fontpath)).deriveFont(20f);
+
         } catch (Exception e) {
-            Log.severe(e);
-            Log.severe("Failed to load essential font, please contact the developer");
-            return new Font(fallbackFontName, Font.PLAIN, 24).deriveFont(24f); // sometimes the first size isnt used
+            Log.info("Failed to load awesome font, using fallback font");
+            return new Font("Arial", Font.BOLD, 24).deriveFont(14f);
         }
     }
 
@@ -71,10 +72,10 @@ class FetchHelper {
                 response.append(inputLine);
             }
             in.close();
-
+            Log.info("SUCCESS : GET request succeeded");
             return response.toString();
         } else {
-            Log.info("GET request failed, retrying...");
+            Log.info("Retrying GET request...");
             if (retriesLeft >= 1) {
                 Time.sleep(200);
                 return FetchHelper.sendGET(getUrl, retriesLeft - 1);
