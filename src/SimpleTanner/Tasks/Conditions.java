@@ -7,6 +7,15 @@ import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.scene.Players;
 
 class Conditions {
+    // True if got anything other than coins or cowhide
+    static boolean gotJunkOrLeather() {
+        return Inventory.contains(
+            item -> item != null
+                && !item.getName().equals("Coins")
+                && item.getId() != LeatherTanner.COWHIDE
+        );
+    }
+
     static boolean gotCowhide() {
         return Inventory.contains(LeatherTanner.COWHIDE);
     }

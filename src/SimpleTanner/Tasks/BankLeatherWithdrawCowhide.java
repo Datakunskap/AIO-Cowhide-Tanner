@@ -23,45 +23,55 @@ public class BankLeatherWithdrawCowhide extends Task {
     @Override
     public int execute() {
         if (Bank.isOpen()) {
-            Time.sleep(200, 400);
-            // deposit all except coins
-            Bank.depositAllExcept(995);
-            Time.sleepUntil(() -> Inventory.getCount() <= 1, 2000);
-
-            // check that there is enough cowhides and gp
-            Item coinsInBank = Bank.getFirst("Coins");
-            Item coinsInInventory = Inventory.getFirst("Coins");
-
-            int coinsAmount = coinsInInventory != null ? coinsInInventory.getStackSize() : 0;
-
-            if (coinsInBank != null) {
-                coinsAmount += coinsInBank.getStackSize();
-                Bank.withdrawAll("Coins");
-                Time.sleepUntil(() -> !Bank.contains("Coins"), 2000);
-                Time.sleep(100, 200);
+            // got something other than coins
+            if (Conditions.gotJunkOrLeather()) {
+                Time.sleep(200, 400);
+                Bank.depositAllExcept(995, LeatherTanner.COWHIDE);
+                Time.sleepUntil(() -> !Conditions.gotJunkOrLeather(), 2000);
             }
 
-            Item cowhide = Bank.getFirst(LeatherTanner.COWHIDE);
+            // handle coins
+            final Item coinsInventory = Inventory.getFirst("Coins");
+            final int coinsAmount = coinsInventory != null ? coinsInventory.getStackSize() : 0;
 
-            int cowhideAmount = cowhide == null ? 0 : cowhide.getStackSize();
+            if (!Conditions.gotEnoughCoins()) {
+                Item coinsInBank = Bank.getFirst("Coins");
+                if (coinsInBank == null) {
+                    // not enough coins to continue
+                    this.stopScript();
+                    return 2000;
+                } else {
+                    // need more coins
+                    Bank.withdrawAll("Coins");
+                    Time.sleepUntil(Conditions::gotEnoughCoins, 2000);
+                }
+            }
 
-            if (cowhideAmount >= 1 && coinsAmount >= cowhideAmount) {
-                // withdraw Cowhide
+            final Item cowhide = Bank.getFirst(LeatherTanner.COWHIDE);
+            final int cowhideBankAmount = cowhide == null ? 0 : cowhide.getStackSize();
+
+            if (cowhideBankAmount >= 1) {
+                // bank has more cowhide, withdraw Cowhide
                 if (Bank.withdrawAll(LeatherTanner.COWHIDE)) {
-                    Time.sleepUntil(Conditions::gotCowhide, 8000);
+                    Time.sleepUntil(Conditions::gotCowhide, 2000);
                 }
             } else {
-                // not enough cowhides or gp
-                Log.info("Finished tanning all cowhides!");
+                // not enough cowhide to continue
                 Log.info(coinsAmount);
-                Log.info(cowhideAmount);
-                Log.info(cowhide == null);
-                this.taskRunner.setStopping(true);
+                Log.info(cowhideBankAmount);
+                this.stopScript();
+                return 2000;
             }
         } else {
             Bank.open();
         }
 
         return 600;
+    }
+
+    private void stopScript() {
+        // not enough cowhides or gp
+        Log.info("Finished tanning all cowhides!");
+        this.taskRunner.setStopping(true);
     }
 }
