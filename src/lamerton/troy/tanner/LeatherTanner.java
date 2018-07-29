@@ -19,7 +19,7 @@ import java.awt.image.ImageObserver;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 1.2)
+@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 0.04)
 public class LeatherTanner extends TaskScript implements RenderListener, ImageObserver {
     public static final int COWHIDE = 1739;
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
