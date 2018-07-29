@@ -13,6 +13,7 @@ import org.rspeer.script.ScriptMeta;
 import org.rspeer.script.task.TaskScript;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
+import sun.jvm.hotspot.utilities.BitMap;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
@@ -39,8 +40,10 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
 
     @Override
     public void onStart() {
-        SimpleTannerGUI gui = new SimpleTannerGUI(this);
-        gui.setVisible(true);
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            new SimpleTannerGUI(this);
+        });
+        this.setPaused(true);
     }
 
     @Override

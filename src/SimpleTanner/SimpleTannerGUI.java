@@ -15,20 +15,19 @@ class SimpleTannerGUI extends JFrame {
 
     SimpleTannerGUI(LeatherTanner main) {
         this.ctx = main;
-        ctx.setPaused(true);
         initComponents();
+        this.setVisible(true);
     }
 
     private void buttonStartActionPerformed(ActionEvent e) {
         ctx.setPaused(false);
         ctx.timeRan = StopWatch.start();
         this.setVisible(false);
+
     }
 
 
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - Troy Lamerton
         textArea1 = new JTextArea();
         buttonStart = new JButton();
 
@@ -65,8 +64,4 @@ class SimpleTannerGUI extends JFrame {
 
     private JButton buttonStart;
     private JTextArea textArea1;
-
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - Troy Lamerton
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

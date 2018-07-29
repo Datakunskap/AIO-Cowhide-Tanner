@@ -40,7 +40,7 @@ class FetchHelper {
 
     static Font getRunescapeFont(String fallbackFontName) {
         try {
-            ClassLoader cLoader = LeatherTanner.class.getClassLoader();
+            ClassLoader cLoader = FetchHelper.class.getClassLoader();
 
             // for some reason, getResourceAsStream(...) throws an exception
             // if we dont create any temp file beforehand
@@ -51,6 +51,7 @@ class FetchHelper {
 
             return Font.createFont(Font.TRUETYPE_FONT, cLoader.getResourceAsStream(fontpath));
         } catch (Exception e) {
+            Log.severe(e);
             Log.severe("Failed to load essential font, please contact the developer");
             return new Font(fallbackFontName, Font.PLAIN, 24).deriveFont(24f); // sometimes the first size isnt used
         }
