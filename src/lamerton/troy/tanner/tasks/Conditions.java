@@ -1,6 +1,6 @@
 package lamerton.troy.tanner.tasks;
 
-import lamerton.troy.tanner.LeatherTanner;
+import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.component.Interfaces;
@@ -13,12 +13,15 @@ class Conditions {
         return Inventory.contains(
             item -> item != null
                 && !item.getName().equals("Coins")
-                && item.getId() != LeatherTanner.COWHIDE
+                && item.getId() != Main.COWHIDE
         );
     }
 
     static boolean gotCowhide() {
-        return Inventory.contains(LeatherTanner.COWHIDE);
+        return Inventory.contains(Main.COWHIDE);
+    }
+    static boolean gotHide() {
+        return Inventory.contains(Main.COWHIDE);
     }
 
     static boolean gotEnoughCoins() {
@@ -27,7 +30,7 @@ class Conditions {
     }
 
     static boolean nearTanner() {
-        return LeatherTanner.TANNER_AREA.getCenter().distance(Players.getLocal()) < 10;
+        return Main.TANNER_AREA.getCenter().distance(Players.getLocal()) < 10;
     }
 
     static boolean atBank() {

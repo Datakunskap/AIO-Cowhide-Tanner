@@ -1,10 +1,10 @@
-## Best Tanner
+## BTR Tanner
 The fastest F2P money making with no requirements!
 
 Get that bond ASAP!
 Tan Cowhide into Leather for maximum profit in Al Kharid.
 
-![Best Tanner running flawlessly](https://i.imgur.com/tqBVHHa.png)
+![BTR Tanner running flawlessly](https://i.imgur.com/tqBVHHa.png)
 
 #### **WHY?**
 

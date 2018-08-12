@@ -1,6 +1,6 @@
 package lamerton.troy.tanner.tasks;
 
-import lamerton.troy.tanner.LeatherTanner;
+import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
@@ -10,8 +10,8 @@ import org.rspeer.ui.Log;
 
 public class BankLeatherWithdrawCowhide extends Task {
 
-    private LeatherTanner taskRunner;
-    public BankLeatherWithdrawCowhide(LeatherTanner taskRunner) {
+    private Main taskRunner;
+    public BankLeatherWithdrawCowhide(Main taskRunner) {
         this.taskRunner = taskRunner;
     }
 
@@ -23,10 +23,11 @@ public class BankLeatherWithdrawCowhide extends Task {
     @Override
     public int execute() {
         if (Bank.isOpen()) {
+            Time.sleep(200);
             // got something other than coins
             if (Conditions.gotJunkOrLeather()) {
                 Time.sleep(200, 400);
-                Bank.depositAllExcept(995, LeatherTanner.COWHIDE);
+                Bank.depositAllExcept(995, Main.COWHIDE);
                 Time.sleepUntil(() -> !Conditions.gotJunkOrLeather(), 2000);
             }
 
@@ -47,12 +48,12 @@ public class BankLeatherWithdrawCowhide extends Task {
                 }
             }
 
-            final Item cowhide = Bank.getFirst(LeatherTanner.COWHIDE);
+            final Item cowhide = Bank.getFirst(Main.COWHIDE);
             final int cowhideBankAmount = cowhide == null ? 0 : cowhide.getStackSize();
 
             if (cowhideBankAmount >= 1) {
                 // bank has more cowhide, withdraw Cowhide
-                if (Bank.withdrawAll(LeatherTanner.COWHIDE)) {
+                if (Bank.withdrawAll(Main.COWHIDE)) {
                     Time.sleepUntil(Conditions::gotCowhide, 2000);
                 }
             } else {
@@ -64,6 +65,7 @@ public class BankLeatherWithdrawCowhide extends Task {
             }
         } else {
             Bank.open();
+            Time.sleep(100);
         }
 
         return 600;

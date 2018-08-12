@@ -1,6 +1,6 @@
 package lamerton.troy.tanner.tasks;
 
-import lamerton.troy.tanner.LeatherTanner;
+import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.Time;
@@ -12,8 +12,8 @@ import org.rspeer.script.task.Task;
 
 public class TanHide extends Task {
 
-    private LeatherTanner taskRunner;
-    public TanHide(LeatherTanner taskRunner) {
+    private Main taskRunner;
+    public TanHide(Main taskRunner) {
         this.taskRunner = taskRunner;
     }
 

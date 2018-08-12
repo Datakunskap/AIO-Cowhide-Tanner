@@ -1,6 +1,6 @@
 package lamerton.troy.tanner.tasks;
 
-import lamerton.troy.tanner.LeatherTanner;
+import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.movement.Movement;
@@ -20,7 +20,7 @@ public class WalkToTanner extends Task {
             WalkingHelper.enableRun();
         }
         if (WalkingHelper.shouldSetDestination()) {
-            if (Movement.walkToRandomized(LeatherTanner.TANNER_AREA.getCenter())) {
+            if (Movement.walkToRandomized(Main.TANNER_AREA.getCenter())) {
                 Time.sleepUntil(Conditions::nearTanner, Random.mid(1800, 2400));
             }
         }

@@ -8,7 +8,7 @@ new FormModel {
 		} ) {
 			name: "this"
 			"background": new java.awt.Color( 51, 51, 51, 255 )
-			"title": "Best Tanner"
+			"title": "BTR Tanner"
 			"resizable": false
 			add( new FormComponent( "javax.swing.JTextArea" ) {
 				name: "textArea1"

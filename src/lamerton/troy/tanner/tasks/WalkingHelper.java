@@ -10,7 +10,7 @@ class WalkingHelper {
         // small chance to force new destination in case of the rare problem:
         // having a destination set but player is not moving towards it
         // I don't trust Players.getLocal().isMoving() for this
-        if (Random.nextInt(1, 100) == 1) {
+        if (Random.nextInt(1, 200) == 1) {
             return true;
         }
 

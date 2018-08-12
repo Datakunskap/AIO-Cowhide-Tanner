@@ -7,9 +7,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 class SimpleTannerGUI extends JFrame {
-    private LeatherTanner ctx;
+    private Main ctx;
 
-    SimpleTannerGUI(LeatherTanner main) {
+    SimpleTannerGUI(Main main) {
         this.ctx = main;
         initComponents();
         this.setVisible(true);
@@ -24,12 +24,13 @@ class SimpleTannerGUI extends JFrame {
 
 
     private void initComponents() {
+        //GEN-BEGIN:initComponents
         textArea1 = new JTextArea();
         buttonStart = new JButton();
 
         //======== this ========
         setBackground(new Color(51, 51, 51));
-        setTitle("Best Tanner");
+        setTitle("BTR Tanner");
         setResizable(false);
         Container contentPane = getContentPane();
         contentPane.setLayout(null);

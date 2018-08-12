@@ -19,9 +19,21 @@ import java.awt.image.ImageObserver;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tans Cowhide into Leather", category = ScriptCategory.MONEY_MAKING, version = 0.04)
-public class LeatherTanner extends TaskScript implements RenderListener, ImageObserver {
+@ScriptMeta(name = "BTR Tanner", developer = "BestTroy", desc = "Tan Cowhide into Leather for " +
+    "that F2P money making", category =
+    ScriptCategory.MONEY_MAKING, version = 0.01)
+public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static final int COWHIDE = 1739;
+
+    // TODO: dragon hide IDS add here ->
+
+    public static final int[][] HIDES = {
+            {1739, 1741}, // cowhide, leather
+            {0, 1}, // green dhide
+            {0, 1}, // red dhide
+            {0, 1}, // blue dhide
+            {0, 1}, // black dhide
+    };
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
 
     private final Task[] TASKS = {
@@ -33,13 +45,14 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
 
     public int totalTanned = 0;
     private final int leatherPrice = FetchHelper.fetchItemPrice(1741, 120);
-    private final int cowhidePrice = FetchHelper.fetchItemPrice(1739, 76);
+    private final int cowhidePrice = FetchHelper.fetchItemPrice(Main.COWHIDE, 76);
 
     StopWatch timeRan = null; // stopwatch is started by GUI
 
     @Override
     public void onStart() {
         javax.swing.SwingUtilities.invokeLater(() -> {
+            // TODO: remove gui -> auto detect hides in inventory/bank
             new SimpleTannerGUI(this);
         });
         this.setPaused(true);
@@ -93,7 +106,7 @@ public class LeatherTanner extends TaskScript implements RenderListener, ImageOb
         Graphics g = renderEvent.getSource();
 
         // render the paint layout
-        g.drawImage(LeatherTanner.image1, 0, 0, this);
+        g.drawImage(Main.image1, 0, 0, this);
 
         // render time running
         g.setFont(runescapeFontSmall);
