@@ -19,7 +19,7 @@ import java.awt.image.ImageObserver;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "BTR Tanner", developer = "BestTroy", desc = "Tan Cowhide into Leather for " +
+@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tan Cowhide into Leather for " +
     "that F2P money making", category =
     ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
@@ -27,13 +27,21 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     // TODO: dragon hide IDS add here ->
 
-    public static final int[][] HIDES = {
-            {1739, 1741}, // cowhide, leather
-            {0, 1}, // green dhide
-            {0, 1}, // red dhide
-            {0, 1}, // blue dhide
-            {0, 1}, // black dhide
+    public static final int[] HIDES = {
+            1739, // cowhide
+            0, // green dhide
+            0, // red dhide
+            0, // blue dhide
+            0, // black dhide
     };
+    public static final int[] LEATHERS = {
+        1741, // leather
+        1, // green dhide leather
+        1, // red dhide leather
+        1, // blue dhide leather
+        1, // black dhide leather
+    };
+
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
 
     private final Task[] TASKS = {
@@ -55,17 +63,8 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
             // TODO: remove gui -> auto detect hides in inventory/bank
             new SimpleTannerGUI(this);
         });
+        submit(TASKS);
         this.setPaused(true);
-    }
-
-    @Override
-    public int loop() {
-        for (Task task : TASKS) {
-            if (task.validate()) {
-                return task.execute();
-            }
-        }
-        return 600;
     }
 
     @Override

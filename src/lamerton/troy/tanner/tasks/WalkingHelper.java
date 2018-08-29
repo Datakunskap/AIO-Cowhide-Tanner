@@ -23,7 +23,7 @@ class WalkingHelper {
         }
 
         // almost at destination
-        if (Movement.getDestinationDistance() <= Random.mid(2,3)) {
+        if (Movement.getDestinationDistance() <= Random.nextInt(2,3)) {
             return true;
         }
 

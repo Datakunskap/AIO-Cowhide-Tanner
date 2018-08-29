@@ -12,6 +12,8 @@ import org.rspeer.script.task.Task;
 
 public class TanHide extends Task {
 
+    public static int TANNER_ID = 3231;
+
     private Main taskRunner;
     public TanHide(Main taskRunner) {
         this.taskRunner = taskRunner;
@@ -25,20 +27,23 @@ public class TanHide extends Task {
     @Override
     public int execute() {
         if (Conditions.tanInterfaceIsOpen()) {
-            Time.sleep(100, 300);
             InterfaceComponent leatherComponent = Interfaces.getComponent(324, 124);
 
             if (leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
                 // wait for all cowhides to turn into leather
                 if (Time.sleepUntil(() -> !Conditions.gotCowhide(), 3000)) {
                     taskRunner.totalTanned += Inventory.getCount("Leather");
+                    return 300;
                 }
             }
+            return 600;
         } else {
-            Npc tanner = Npcs.getNearest(3231);
-            tanner.interact("Trade");
-            Time.sleepUntil(Conditions::tanInterfaceIsOpen, 4000);
+            Npc tanner = Npcs.getNearest(TANNER_ID);
+            if (tanner.interact("Trade")) {
+                Time.sleepUntil(Conditions::tanInterfaceIsOpen, 7000);
+                return 400;
+            }
+            return 600;
         }
-        return 600;
     }
 }

@@ -2,9 +2,11 @@ package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 
 class Conditions {
@@ -21,7 +23,7 @@ class Conditions {
         return Inventory.contains(Main.COWHIDE);
     }
     static boolean gotHide() {
-        return Inventory.contains(Main.COWHIDE);
+        return Inventory.contains(Main.HIDES);
     }
 
     static boolean gotEnoughCoins() {
@@ -30,11 +32,12 @@ class Conditions {
     }
 
     static boolean nearTanner() {
-        return Main.TANNER_AREA.getCenter().distance(Players.getLocal()) < 10;
+        Npc tanner = Npcs.getNearest(TanHide.TANNER_ID);
+        return Main.TANNER_AREA.getCenter().distance(Players.getLocal()) < 10 && tanner != null && tanner.isPositionInteractable();
     }
 
     static boolean atBank() {
-        return BankLocation.AL_KHARID.getPosition().distance(Players.getLocal().getPosition()) < 3;
+        return BankLocation.AL_KHARID.getPosition().distance(Players.getLocal().getPosition()) <= 7;
     }
 
     static boolean tanInterfaceIsOpen() {
