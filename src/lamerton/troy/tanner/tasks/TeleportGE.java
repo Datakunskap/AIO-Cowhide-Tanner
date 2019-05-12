@@ -34,7 +34,9 @@ public class TeleportGE extends Task {
         if (!EquipmentSlot.RING.getItem().getName().equals("Ring of wealth") && EquipmentSlot.RING.interact("Grand exchange")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
-
+            if (!hasCharge()) {
+                Main.newRingW = true;
+            }
         } else {
             for (Item item : Inventory.getItems()) {
                 if (item != null && item.getName().contains("wealth") && item.getName().matches(".*\\d+.*")) {
@@ -48,13 +50,13 @@ public class TeleportGE extends Task {
     }
 
     private boolean hasRing(){
-        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth"))){
+        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) || Inventory.contains(11980)){
             return true;
         }
         return false;
     }
 
-    private boolean hasCharge(){
+    private static boolean hasCharge(){
         // if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) && !Equipment.contains("Ring of wealth")) {
         if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth"))){
             String[] actions = EquipmentSlot.RING.getActions();
