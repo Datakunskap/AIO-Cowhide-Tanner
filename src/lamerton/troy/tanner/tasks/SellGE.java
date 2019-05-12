@@ -44,7 +44,7 @@ public class SellGE extends Task {
         }
 
         if (!ExGrandExchange.sell(Main.LEATHER_NOTE, 0, Main.leatherPrice, false)) {
-            Time.sleep(600);
+            Time.sleep(1000);
             GrandExchange.collectAll();
             Time.sleep(Random.mid(600, 1000));
             GrandExchange.collectAll();
