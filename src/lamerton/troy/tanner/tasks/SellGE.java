@@ -7,6 +7,7 @@ import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
+import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer;
@@ -44,6 +45,9 @@ public class SellGE extends Task {
         }
 
         if (!ExGrandExchange.sell(Main.LEATHER_NOTE, 0, Main.leatherPrice, false)) {
+            while (GrandExchange.getFirstActive().getProgress().equals(RSGrandExchangeOffer.Progress.IN_PROGRESS)) {
+                Time.sleep(1000);
+            }
             Time.sleep(1000);
             GrandExchange.collectAll();
             Time.sleep(Random.mid(600, 1000));
