@@ -1,9 +1,8 @@
 package lamerton.troy.tanner;
 
-import lamerton.troy.tanner.tasks.BankLeatherWithdrawCowhide;
-import lamerton.troy.tanner.tasks.TanHide;
-import lamerton.troy.tanner.tasks.WalkToBank;
-import lamerton.troy.tanner.tasks.WalkToTanner;
+import lamerton.troy.tanner.data.Location;
+import lamerton.troy.tanner.data.MuleArea;
+import lamerton.troy.tanner.tasks.*;
 import org.rspeer.runetek.api.commons.StopWatch;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.event.listeners.RenderListener;
@@ -16,14 +15,22 @@ import org.rspeer.ui.Log;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "Best Tanner", developer = "BestTroy", desc = "Tan Cowhide into Leather for " +
-    "that F2P money making", category =
-    ScriptCategory.MONEY_MAKING, version = 0.01)
+@ScriptMeta(name = "Ultimate Tanner", developer = "DrScatman", desc = "Tans hides " +
+        "F2P money making", category =
+        ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static final int COWHIDE = 1739;
+    public static final int LEATHER_NOTE = 1742;
+    public static Location location;
+    public static boolean restock = true;
+    public static boolean sold = false;
+    public static boolean checkedBank = false;
+    public static MuleArea muleArea = MuleArea.GE_NW;
+    public static boolean isMuling = false;
 
     // TODO: dragon hide IDS add here ->
 
@@ -35,30 +42,53 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
             0, // black dhide
     };
     public static final int[] LEATHERS = {
-        1741, // leather
-        1, // green dhide leather
-        1, // red dhide leather
-        1, // blue dhide leather
-        1, // black dhide leather
+            1741, // leather
+            1, // green dhide leather
+            1, // red dhide leather
+            1, // blue dhide leather
+            1, // black dhide leather
     };
 
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
 
     private final Task[] TASKS = {
-        new WalkToBank(),
-        new BankLeatherWithdrawCowhide(this),
-        new WalkToTanner(),
-        new TanHide(this)
+            new Mule(),
+            new WalkToGE(),
+            new SellGE(),
+            new BuyGE(),
+            new WalkToBank(),
+            new BankLeatherWithdrawCowhide(this),
+            new WalkToTanner(),
+            new TanHide(this)
     };
 
     public int totalTanned = 0;
-    private final int leatherPrice = FetchHelper.fetchItemPrice(1741, 120);
-    private final int cowhidePrice = FetchHelper.fetchItemPrice(Main.COWHIDE, 76);
+
+    public static int leatherPrice;
+    {
+        try {
+            leatherPrice = ExPriceChecker.getRSPrice(1741);
+        } catch (IOException e) {
+            Log.severe("Failed getting price");
+            e.printStackTrace();
+        }
+    }
+
+    public static int cowhidePrice;
+    {
+        try {
+            cowhidePrice = ExPriceChecker.getRSPrice(Main.COWHIDE);
+        } catch (IOException e) {
+            Log.severe("Failed getting price");
+            e.printStackTrace();
+        }
+    }
 
     StopWatch timeRan = null; // stopwatch is started by GUI
 
     @Override
     public void onStart() {
+        location = Location.GE_AREA;
         javax.swing.SwingUtilities.invokeLater(() -> {
             // TODO: remove gui -> auto detect hides in inventory/bank
             new SimpleTannerGUI(this);
@@ -81,9 +111,9 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     private void logStats() {
         int[] stats = this.getStats();
         String statsString = "Tanned: "
-            + stats[0]
-            + "  |  Total profit: " + stats[1]
-            + "  |  Hourly profit: " + stats[2];
+                + stats[0]
+                + "  |  Total profit: " + stats[1]
+                + "  |  Hourly profit: " + stats[2];
         Log.info(statsString);
     }
 
@@ -128,9 +158,9 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
         int adjustY = -5;
 
-        this.drawStringWithShadow(g, formatNumber.format(totalCowhideTanned), 68 ,229 + adjustY, Color.YELLOW);
-        this.drawStringWithShadow(g, formatNumber.format(totalProfit), 68 ,274 + adjustY, Color.WHITE);
-        this.drawStringWithShadow(g, formatNumber.format(hourlyProfit), 68 ,319 + adjustY, Color.WHITE);
+        this.drawStringWithShadow(g, formatNumber.format(totalCowhideTanned), 68, 229 + adjustY, Color.YELLOW);
+        this.drawStringWithShadow(g, formatNumber.format(totalProfit), 68, 274 + adjustY, Color.WHITE);
+        this.drawStringWithShadow(g, formatNumber.format(hourlyProfit), 68, 319 + adjustY, Color.WHITE);
     }
 
     private void drawStringWithShadow(Graphics g, String str, int x, int y, Color color) {
@@ -152,5 +182,14 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
                 hourlyProfit
         };
         return stats;
+    }
+
+    public static int randInt(int min, int max) {
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+        java.util.Random rand = new java.util.Random();
+        int randomNum = rand.nextInt(max - min + 1) + min;
+        return randomNum;
     }
 }

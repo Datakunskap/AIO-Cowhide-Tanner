@@ -1,5 +1,6 @@
 package lamerton.troy.tanner.tasks;
 
+import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
@@ -10,7 +11,8 @@ public class WalkToBank extends Task {
     @Override
     public boolean validate() {
         // True if player is far away from the bank
-        return !Conditions.atBank() && (!Conditions.gotCowhide() || !Conditions.gotEnoughCoins());
+        return (!Conditions.atBank() && (!Conditions.gotCowhide() || !Conditions.gotEnoughCoins())) &&
+                !Main.restock && !Main.isMuling;
     }
 
     @Override

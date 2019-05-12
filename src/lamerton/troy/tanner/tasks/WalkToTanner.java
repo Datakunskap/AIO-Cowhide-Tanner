@@ -11,7 +11,8 @@ public class WalkToTanner extends Task {
     @Override
     public boolean validate() {
         // True if player is far away from the tanner
-        return !Conditions.nearTanner() && Conditions.gotCowhide() && Conditions.gotEnoughCoins();
+        return (!Conditions.nearTanner() && Conditions.gotCowhide() && Conditions.gotEnoughCoins()) &&
+                !Main.restock && !Main.isMuling;
     }
 
     @Override

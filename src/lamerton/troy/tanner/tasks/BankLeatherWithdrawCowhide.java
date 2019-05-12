@@ -1,5 +1,6 @@
 package lamerton.troy.tanner.tasks;
 
+import lamerton.troy.tanner.ExPriceChecker;
 import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
@@ -8,6 +9,8 @@ import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
+
+import java.io.IOException;
 
 public class BankLeatherWithdrawCowhide extends Task {
 
@@ -18,7 +21,8 @@ public class BankLeatherWithdrawCowhide extends Task {
 
     @Override
     public boolean validate() {
-        return Conditions.atBank() && !Conditions.gotCowhide() || !Conditions.gotEnoughCoins();
+        return (Conditions.atBank() && !Conditions.gotCowhide() || !Conditions.gotEnoughCoins()) &&
+                !Main.restock && !Main.isMuling;
     }
 
     @Override
@@ -70,7 +74,8 @@ public class BankLeatherWithdrawCowhide extends Task {
                 // not enough cowhide to continue
                 Log.info(cowhideBankAmount);
                 Log.info("Out of cowhide");
-                this.stopScript();
+                Main.restock = true;
+                //this.stopScript();
                 return 2000;
             }
         } else {

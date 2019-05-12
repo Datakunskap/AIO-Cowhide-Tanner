@@ -34,11 +34,11 @@ class WalkingHelper {
         if (Movement.isRunEnabled()) {
             return false;
         }
-        if (Random.nextInt(1, 5000) == 1) {
+        if (Random.nextInt(1, 1000) == 1) {
             // sometimes I like to random enable run, so my bot should too
             return true;
         }
-        return Movement.getRunEnergy() > Random.nextInt(40, 55);
+        return Movement.getRunEnergy() > Random.nextInt(4, 25);
     }
 
     static boolean enableRun() {

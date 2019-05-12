@@ -12,14 +12,13 @@ class SimpleTannerGUI extends JFrame {
     SimpleTannerGUI(Main main) {
         this.ctx = main;
         initComponents();
-        this.setVisible(true);
+        this.setVisible(false);
     }
 
-    private void buttonStartActionPerformed(ActionEvent e) {
+    private void buttonStartActionPerformed() {
         ctx.setPaused(false);
         ctx.timeRan = StopWatch.start();
         this.setVisible(false);
-
     }
 
 
@@ -49,7 +48,7 @@ class SimpleTannerGUI extends JFrame {
         buttonStart.setFocusCycleRoot(true);
         buttonStart.setFont(new Font(".SF NS Text", Font.PLAIN, 20));
         buttonStart.setBackground(new Color(57, 67, 54));
-        buttonStart.addActionListener(e -> buttonStartActionPerformed(e));
+        buttonStart.addActionListener(e -> buttonStartActionPerformed());
         contentPane.add(buttonStart);
         buttonStart.setBounds(8, 75, 346, 60);
 
@@ -57,6 +56,8 @@ class SimpleTannerGUI extends JFrame {
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
+
+        buttonStartActionPerformed();
     }
 
     private JButton buttonStart;
