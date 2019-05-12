@@ -30,6 +30,8 @@ public class SellGE extends Task {
                 while(Bank.contains(Main.LEATHERS[0])) {
                     Time.sleep(3000);
                     Bank.depositInventory();
+                    Time.sleep(2000);
+                    Bank.withdrawAll(11980);
                     Time.sleep(3000);
                     Bank.withdrawAll(995);
                     Time.sleep(3000);

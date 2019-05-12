@@ -25,6 +25,10 @@ public class BuyGE extends Task {
 
     @Override
     public int execute() {
+        if (Main.newRingW && Inventory.getCount(true, 995) >= 50000) {
+            buyRingW();
+        }
+
         gp = Inventory.getCount(true, 995) - 1000;
         if(gp < Main.cowhidePrice) {
             Log.severe("Not enough moneys");
@@ -58,5 +62,20 @@ public class BuyGE extends Task {
             }
         }
         return 1000;
+    }
+
+    private void buyRingW(){
+        Log.fine("Buying Ring Of Wealth");
+        if (ExGrandExchange.buy(11980, 1, Main.priceRingW, false)) {
+            Time.sleep(600);
+            GrandExchange.collectAll();
+            Time.sleep(Random.mid(300, 600));
+            GrandExchange.collectAll();
+            Time.sleep(Random.mid(300, 600));
+
+            if (Inventory.contains(11980)) {
+                Main.newRingW = false;
+            }
+        }
     }
 }

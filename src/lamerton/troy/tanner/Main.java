@@ -31,6 +31,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean checkedBank = false;
     public static MuleArea muleArea = MuleArea.GE_NW;
     public static boolean isMuling = false;
+    public static boolean newRingW = false;
 
     // TODO: dragon hide IDS add here ->
 
@@ -65,19 +66,14 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public int totalTanned = 0;
 
     public static int leatherPrice;
+    public static int cowhidePrice;
+    public static int priceRingW;
+
     {
         try {
             leatherPrice = ExPriceChecker.getRSPrice(1741);
-        } catch (IOException e) {
-            Log.severe("Failed getting price");
-            e.printStackTrace();
-        }
-    }
-
-    public static int cowhidePrice;
-    {
-        try {
             cowhidePrice = ExPriceChecker.getRSPrice(Main.COWHIDE);
+            priceRingW = ExPriceChecker.getRSPrice(11980);
         } catch (IOException e) {
             Log.severe("Failed getting price");
             e.printStackTrace();
