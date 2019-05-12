@@ -15,7 +15,7 @@ public class TeleportGE extends Task {
 
     @Override
     public boolean validate() {
-        return Main.restock && !Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling;
+        return Main.restock && !Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling && hasRing();
     }
 
     @Override
@@ -45,6 +45,13 @@ public class TeleportGE extends Task {
                 }
             }
         }
+    }
+
+    private boolean hasRing(){
+        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth"))){
+            return true;
+        }
+        return false;
     }
 
     private boolean hasCharge(){
