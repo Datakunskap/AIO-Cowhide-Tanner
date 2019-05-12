@@ -54,6 +54,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     private final Task[] TASKS = {
             new Mule(),
+            new TeleportGE(),
             new WalkToGE(),
             new SellGE(),
             new BuyGE(),

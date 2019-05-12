@@ -15,7 +15,7 @@ public class TeleportGE extends Task {
 
     @Override
     public boolean validate() {
-        return Main.restock && !Main.location.getGEArea().contains(Players.getLocal());
+        return Main.restock && !Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling;
     }
 
     @Override
