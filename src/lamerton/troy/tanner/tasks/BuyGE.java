@@ -38,6 +38,12 @@ public class BuyGE extends Task {
         if (Main.newRingD && Main.gp >= 50000) {
             buyRingD();
         }
+        if (Inventory.contains(11980)) {
+            Main.newRingW = false;
+        }
+        if (Equipment.contains(2552)) {
+            Main.newRingD = false;
+        }
 
         if (!Main.checkedBank) {
             Banking.execute();
@@ -65,6 +71,7 @@ public class BuyGE extends Task {
                 if (Time.sleepUntil(() -> Inventory.getCount(true, Main.COWHIDE) >= buyQuantity || Inventory.getCount(true, Main.COWHIDE+1) >= buyQuantity, 5000)) {
                     Log.fine("Done buying");
                     Main.sold = false;
+                    Main.checkedBank = false;
                     //Main.restock = false;
                 }
             }
