@@ -4,6 +4,7 @@ import lamerton.troy.tanner.data.Location;
 import lamerton.troy.tanner.data.MuleArea;
 import lamerton.troy.tanner.tasks.*;
 import org.rspeer.runetek.api.commons.StopWatch;
+import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.event.listeners.RenderListener;
 import org.rspeer.runetek.event.types.RenderEvent;
@@ -23,28 +24,35 @@ import java.time.Duration;
         "F2P money making", category =
         ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
-    public static final int COWHIDE = 1739;
-    public static final int LEATHER_NOTE = 1742;
+    public static final int COWHIDE = 1753;
+    public static final int LEATHER_NOTE = 1746;
     public static Location location;
-    public static boolean restock = true;
     public static boolean sold = false;
     public static boolean checkedBank = false;
     public static MuleArea muleArea = MuleArea.GE_NW;
     public static boolean isMuling = false;
     public static boolean newRingW = false;
+    public static boolean newRingD = true;
+    public static boolean geSet = false;
+    public static int gp = 0;
+
+    /*TO DO:*/
+    public static boolean restock = false;
+    public static final int muleAmnt = 8000000;
+    public static final int muleKeep = 5000000;
 
     // TODO: dragon hide IDS add here ->
 
     public static final int[] HIDES = {
+            1753, // green dhide
             1739, // cowhide
-            0, // green dhide
             0, // red dhide
             0, // blue dhide
             0, // black dhide
     };
     public static final int[] LEATHERS = {
+            1745, // green dhide leather
             1741, // leather
-            1, // green dhide leather
             1, // red dhide leather
             1, // blue dhide leather
             1, // black dhide leather
@@ -58,6 +66,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
             new WalkToGE(),
             new SellGE(),
             new BuyGE(),
+            new TeleportAK(),
             new WalkToBank(),
             new BankLeatherWithdrawCowhide(this),
             new WalkToTanner(),
@@ -69,12 +78,14 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static int leatherPrice;
     public static int cowhidePrice;
     public static int priceRingW;
+    public static int priceRingD;
 
     {
         try {
-            leatherPrice = ExPriceChecker.getRSPrice(1741);
-            cowhidePrice = ExPriceChecker.getRSPrice(Main.COWHIDE);
-            priceRingW = ExPriceChecker.getRSPrice(11980);
+            leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
+            cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE);
+            priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
+            priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
         } catch (IOException e) {
             Log.severe("Failed getting price");
             e.printStackTrace();

@@ -2,13 +2,13 @@ package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.ExGrandExchange;
 import lamerton.troy.tanner.Main;
-import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
-import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.GrandExchangeSetup;
+import org.rspeer.runetek.api.component.tab.Equipment;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.script.task.Task;
@@ -23,30 +23,51 @@ public class SellGE extends Task {
 
     @Override
     public int execute() {
-        Log.fine("Selling leathers");
         if (!Main.checkedBank) {
-            Bank.open(BankLocation.GRAND_EXCHANGE);
-            if (Main.location.getGEArea().contains(Players.getLocal()) && Bank.isOpen()) {
-                while(Bank.contains(Main.LEATHERS[0])) {
-                    Time.sleep(3000);
-                    Bank.depositInventory();
-                    Time.sleep(2000);
-                    Bank.withdrawAll(11980);
-                    Time.sleep(3000);
-                    Bank.withdrawAll(995);
-                    Time.sleep(3000);
-                    Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);
-                    Time.sleep(3000);
-                    Bank.withdrawAll(Main.LEATHERS[0]);
-                    Time.sleep(3000);
-                }
-                Bank.close();
-                Main.checkedBank = true;
-            }
+            Banking.execute();
+            Main.checkedBank = true;
+        }
+
+        Log.fine("Selling leathers");
+        if (!GrandExchange.isOpen()) {
+            Npcs.getNearest("Grand Exchange Clerk").interact("Exchange");
+            Time.sleep(Main.randInt(700, 1300));
             return 1000;
         }
 
-        if (!ExGrandExchange.sell(Main.LEATHER_NOTE, 0, Main.leatherPrice, false)) {
+        if (Inventory.contains(Main.LEATHER_NOTE) && !Main.geSet) {
+            GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL);
+            Time.sleep(800);
+            GrandExchangeSetup.setItem(Main.LEATHER_NOTE);
+            Time.sleep(600);
+            GrandExchangeSetup.setPrice(Main.leatherPrice);
+            Time.sleep(600);
+            GrandExchangeSetup.decreasePrice(Random.nextInt(2, 4));
+            Time.sleep(600);
+            GrandExchangeSetup.setQuantity(9999999);
+            Time.sleep(600);
+            GrandExchangeSetup.confirm();
+            Time.sleep(600);
+            if(GrandExchangeSetup.getItem() != null) {
+                Main.geSet = true;
+            }
+
+            GrandExchange.collectAll();
+            Time.sleep(Random.mid(300, 600));
+            GrandExchange.collectAll();
+            Time.sleep(Random.mid(300, 600));
+        }
+
+        if (!Inventory.contains(Main.LEATHER_NOTE) && !Inventory.contains(Main.LEATHERS[0])) {
+            Main.sold = true;
+            Main.checkedBank = false;
+            Main.geSet = false;
+            Log.info("Done selling");
+        }
+        return 1000;
+
+
+        /*if (!ExGrandExchange.sell(Main.LEATHER_NOTE, 0, Main.leatherPrice, false)) {
             while (GrandExchange.getFirstActive().getProgress().equals(RSGrandExchangeOffer.Progress.IN_PROGRESS)) {
                 Time.sleep(1000);
             }
@@ -68,6 +89,6 @@ public class SellGE extends Task {
                 Log.info("Done selling 2");
             }
         }
-        return 1000;
+        return 1000;*/
     }
 }

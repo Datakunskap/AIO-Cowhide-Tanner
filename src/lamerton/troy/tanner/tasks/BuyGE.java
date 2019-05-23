@@ -2,19 +2,20 @@ package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.ExGrandExchange;
 import lamerton.troy.tanner.Main;
-import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
+import org.rspeer.runetek.api.component.GrandExchangeSetup;
+import org.rspeer.runetek.api.component.tab.Equipment;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
 public class BuyGE extends Task {
 
-    private int gp = 0;
     private int buyQuantity;
     private int currAmount;
 
@@ -25,28 +26,31 @@ public class BuyGE extends Task {
 
     @Override
     public int execute() {
-        if (Main.newRingW && Inventory.getCount(true, 995) >= 50000) {
+        if (Inventory.contains(11980)) {
+            Main.newRingW = false;
+        }
+        if (Equipment.contains(2552)) {
+            Main.newRingD = false;
+        }
+        if (Main.newRingW && Main.gp >= 50000) {
             buyRingW();
         }
-
-        gp = Inventory.getCount(true, 995) - 1000;
-        if(gp < Main.cowhidePrice) {
-            Log.severe("Not enough moneys");
-            Main.sold = false;
-            Main.restock = false;
+        if (Main.newRingD && Main.gp >= 50000) {
+            buyRingD();
         }
-
-        buyQuantity = gp / (Main.cowhidePrice);
 
         if (!Main.checkedBank) {
-            Bank.open(BankLocation.GRAND_EXCHANGE);
-            if(Bank.isOpen()) {
-                currAmount = Bank.getCount(Main.COWHIDE);
-                Bank.close();
-                Main.checkedBank = true;
-            }
-            return 1000;
+            Banking.execute();
+            Main.checkedBank = true;
         }
+
+        if(Main.gp < Main.cowhidePrice && GrandExchange.getOffers() == null && GrandExchangeSetup.getItem() == null) {
+            Log.severe("Not enough moneys");
+            Main.sold = false;
+            //Main.restock = false;
+        }
+
+        buyQuantity = Main.gp / (Main.cowhidePrice);
 
         Log.fine("Buying hides");
         if (ExGrandExchange.buy(Main.COWHIDE, buyQuantity, Main.cowhidePrice, false)) {
@@ -55,10 +59,14 @@ public class BuyGE extends Task {
             Time.sleep(Random.mid(300, 600));
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
+            GrandExchange.collectAll();
 
             if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)) {
-                Main.sold = false;
-                Main.restock = false;
+                if (Time.sleepUntil(() -> Inventory.getCount(true, Main.COWHIDE) >= buyQuantity || Inventory.getCount(true, Main.COWHIDE+1) >= buyQuantity, 5000)) {
+                    Log.fine("Done buying");
+                    Main.sold = false;
+                    //Main.restock = false;
+                }
             }
         }
         return 1000;
@@ -66,15 +74,42 @@ public class BuyGE extends Task {
 
     private void buyRingW(){
         Log.fine("Buying Ring Of Wealth");
-        if (ExGrandExchange.buy(11980, 1, Main.priceRingW, false)) {
+        if (ExGrandExchange.buy(11980, 1, Main.priceRingW+500, false)) {
+            Time.sleep(600);
+            GrandExchange.collectAll();
+            Time.sleep(Random.mid(300, 600));
+            GrandExchange.collectAll();
+            Time.sleep(Random.mid(300, 600));
+        }
+    }
+
+    private boolean equipD(){
+        if(GrandExchange.isOpen() || GrandExchangeSetup.isOpen()) {
+            Npcs.getNearest("Banker").interact("Bank");
+            Time.sleep(1000);
+            Bank.close();
+        }
+        if(Inventory.getFirst(2552).interact("Wear")) {
+            if (Time.sleepUntil(() -> Equipment.contains(2552), Random.mid(2300, 2850))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void buyRingD(){
+        Log.fine("Buying Ring Of Dueling");
+        if (ExGrandExchange.buy(2552, 1, Main.priceRingD+500, false)) {
             Time.sleep(600);
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
 
-            if (Inventory.contains(11980)) {
-                Main.newRingW = false;
+            if (Inventory.contains(2552)) {
+                while (!equipD()) {
+                    Time.sleep(1000);
+                }
             }
         }
     }

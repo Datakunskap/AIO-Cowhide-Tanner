@@ -40,6 +40,10 @@ class Conditions {
         return BankLocation.AL_KHARID.getPosition().distance(Players.getLocal().getPosition()) <= 7;
     }
 
+    static boolean atGE() {
+        return BankLocation.GRAND_EXCHANGE.getPosition().distance(Players.getLocal().getPosition()) <= 7;
+    }
+
     static boolean tanInterfaceIsOpen() {
         return Interfaces.getComponent(324, 124) != null;
     }

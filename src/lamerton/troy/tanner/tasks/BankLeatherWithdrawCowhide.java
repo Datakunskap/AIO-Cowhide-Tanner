@@ -3,6 +3,7 @@ package lamerton.troy.tanner.tasks;
 import lamerton.troy.tanner.ExPriceChecker;
 import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
@@ -47,7 +48,16 @@ public class BankLeatherWithdrawCowhide extends Task {
                 if (coinsInBank == null) {
                     // not enough coins to continue
                     Log.info("Out of coins");
-                    this.stopScript();
+                    //this.stopScript();
+                    if(!Bank.isOpen()){
+                        Bank.open(BankLocation.AL_KHARID);
+                        return 1000;
+                    } else {
+                        Bank.withdrawAll(11980);
+                        Time.sleep(5000);
+                    }
+
+                    Main.restock = true;
                     return 2000;
                 } else {
                     // need more coins
@@ -67,13 +77,21 @@ public class BankLeatherWithdrawCowhide extends Task {
                     Time.sleepUntil(Conditions::gotCowhide, 2000);
                     return Random.nextInt(80, 160);
                 } else {
-                    Log.severe("Cowhide withdraw failed, retrying...");
+                    Log.severe("Dragonhide withdraw failed, retrying...");
                     return 400;
                 }
             } else {
                 // not enough cowhide to continue
                 Log.info(cowhideBankAmount);
-                Log.info("Out of cowhide");
+                Log.info("Out of dragonhide");
+                if(!Bank.isOpen()){
+                    Bank.open(BankLocation.AL_KHARID);
+                    return 1000;
+                } else {
+                    Bank.withdrawAll(11980);
+                    Time.sleep(5000);
+                }
+
                 Main.restock = true;
                 //this.stopScript();
                 return 2000;

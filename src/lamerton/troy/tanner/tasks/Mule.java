@@ -28,9 +28,9 @@ public class Mule extends Task {
     public int gold3;
     public String status1;
     private final String user = "milleja1";
-    private final int muleAmnt = 100000;
+    private final int muleAmnt = Main.muleAmnt;
     private final int muleWorld = 301;
-    private final int muleKeep = 20000;
+    private final int muleKeep = Main.muleKeep;
     public String status = "needgold";
     public static String Username;
     public static String Password;
