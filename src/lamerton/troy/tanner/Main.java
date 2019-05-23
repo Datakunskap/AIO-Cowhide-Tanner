@@ -36,12 +36,10 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean geSet = false;
     public static int gp = 0;
 
-    /* ~ TO DO ~ */
+    // TODO: fill out values ->
     public static boolean restock = false;
-    public static final int muleAmnt = 8000000;
+    public static final int muleAmnt = 6000000;
     public static final int muleKeep = 5000000;
-
-    // TODO: dragon hide IDS add here ->
 
     public static final int[] HIDES = {
             1753, // green dhide
@@ -63,10 +61,10 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     private final Task[] TASKS = {
             new Mule(),
             new TeleportGE(),
+            new TeleportAK(),
             new WalkToGE(),
             new SellGE(),
             new BuyGE(),
-            new TeleportAK(),
             new WalkToBank(),
             new BankLeatherWithdrawCowhide(this),
             new WalkToTanner(),
@@ -83,7 +81,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     {
         try {
             leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
-            cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE);
+            cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 10;
             priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
             priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
         } catch (IOException e) {

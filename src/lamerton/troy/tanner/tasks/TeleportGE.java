@@ -53,7 +53,7 @@ public class TeleportGE extends Task {
     }
 
     private boolean hasRing(){
-        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) || Inventory.contains(11980)){
+        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) || Inventory.contains(i -> i != null && i.getName().contains("Ring of wealth"))){
             return true;
         }
         return false;

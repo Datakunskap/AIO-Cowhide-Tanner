@@ -18,7 +18,8 @@ public class TeleportAK extends Task {
         if (!Main.location.getGEArea().contains(Players.getLocal())) {
             Main.restock = false;
         }
-        return Main.restock && Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling && hasRing() && !Main.newRingD;
+        return !Main.restock && Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling &&
+                hasRing() && !Main.newRingD;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class TeleportAK extends Task {
     }
 
     private boolean hasRing(){
-        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling")) || Inventory.contains(2552)){
+        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling")) || Inventory.contains(i -> i != null && i.getName().contains("Ring of dueling"))){
             return true;
         }
         return false;

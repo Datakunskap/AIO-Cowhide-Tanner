@@ -17,7 +17,6 @@ import org.rspeer.ui.Log;
 public class BuyGE extends Task {
 
     private int buyQuantity;
-    private int currAmount;
 
     @Override
     public boolean validate() {
@@ -53,7 +52,8 @@ public class BuyGE extends Task {
         if(Main.gp < Main.cowhidePrice && GrandExchange.getOffers() == null && GrandExchangeSetup.getItem() == null) {
             Log.severe("Not enough moneys");
             Main.sold = false;
-            //Main.restock = false;
+            Main.checkedBank = false;
+            Main.restock = false;
         }
 
         buyQuantity = Main.gp / (Main.cowhidePrice);
@@ -72,7 +72,7 @@ public class BuyGE extends Task {
                     Log.fine("Done buying");
                     Main.sold = false;
                     Main.checkedBank = false;
-                    //Main.restock = false;
+                    Main.restock = false;
                 }
             }
         }
@@ -96,7 +96,7 @@ public class BuyGE extends Task {
             Time.sleep(1000);
             Bank.close();
         }
-        if(Inventory.getFirst(2552).interact("Wear")) {
+        if(Inventory.getFirst(x -> x != null && x.getName().contains("Ring of dueling") && x.getName().matches(".*\\d+.*")).interact("Wear")) {
             if (Time.sleepUntil(() -> Equipment.contains(2552), Random.mid(2300, 2850))) {
                 return true;
             }

@@ -4,7 +4,6 @@ import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
-import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.ui.Log;
 
 public class Banking {//extends Task {
@@ -18,22 +17,22 @@ public class Banking {//extends Task {
         Log.info("Banking");
         while (!Bank.isOpen()) {
             Bank.open(BankLocation.GRAND_EXCHANGE);
-            Time.sleep( 1000);
+            Time.sleep(1000);
         }
         if (Bank.isOpen()) {
             Bank.depositInventory();
-            Time.sleep(2500);
+            Time.sleep(4000);
 
             // Keep X gold for tanning
             Main.gp = Bank.getCount(995);
-            Main.gp -= Main.gp / 80;
+            Main.gp -= Main.gp / 70;
 
-            Time.sleep(2500);
+            Time.sleep(1000);
             Bank.withdrawAll(995);
             Time.sleep(5000);
-            if(Bank.contains(2552) || Bank.contains(Main.LEATHERS[0])) {
-                Bank.withdrawAll(2552);
-                Time.sleep(5000);
+            Bank.withdraw(x -> x != null && x.getName().contains("Ring of dueling") && x.getName().matches(".*\\d+.*"), 1);
+            Time.sleep(5000);
+            if (Bank.contains(Main.LEATHERS[0])) {
                 Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);
                 Time.sleep(5000);
                 Bank.withdrawAll(Main.LEATHERS[0]);

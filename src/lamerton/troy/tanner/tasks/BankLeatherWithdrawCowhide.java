@@ -53,7 +53,7 @@ public class BankLeatherWithdrawCowhide extends Task {
                         Bank.open(BankLocation.AL_KHARID);
                         return 1000;
                     } else {
-                        Bank.withdrawAll(11980);
+                        Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
                         Time.sleep(5000);
                     }
 
@@ -88,7 +88,7 @@ public class BankLeatherWithdrawCowhide extends Task {
                     Bank.open(BankLocation.AL_KHARID);
                     return 1000;
                 } else {
-                    Bank.withdrawAll(11980);
+                    Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
                     Time.sleep(5000);
                 }
 
