@@ -36,7 +36,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean geSet = false;
     public static int gp = 0;
 
-    /*TO DO:*/
+    /* ~ TO DO ~ */
     public static boolean restock = false;
     public static final int muleAmnt = 8000000;
     public static final int muleKeep = 5000000;
