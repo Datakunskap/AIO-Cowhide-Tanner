@@ -91,13 +91,14 @@ public class BuyGE extends Task {
     }
 
     private boolean equipD(){
+        Log.info("Equipping ring");
         if(GrandExchange.isOpen() || GrandExchangeSetup.isOpen()) {
             Npcs.getNearest("Banker").interact("Bank");
             Time.sleep(1000);
             Bank.close();
         }
         if(Inventory.getFirst(x -> x != null && x.getName().contains("Ring of dueling") && x.getName().matches(".*\\d+.*")).interact("Wear")) {
-            if (Time.sleepUntil(() -> Equipment.contains(2552), Random.mid(2300, 2850))) {
+            if (Time.sleepUntil(() -> Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling") && i.getName().matches(".*\\d+.*")), Random.mid(2300, 2850))) {
                 return true;
             }
         }
@@ -113,7 +114,7 @@ public class BuyGE extends Task {
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
 
-            if (Inventory.contains(2552)) {
+            if (Inventory.contains(i -> i != null && i.getName().contains("Ring of dueling") && i.getName().matches(".*\\d+.*"))) {
                 while (!equipD()) {
                     Time.sleep(1000);
                 }

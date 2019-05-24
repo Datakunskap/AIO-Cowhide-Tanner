@@ -4,7 +4,6 @@ import lamerton.troy.tanner.data.Location;
 import lamerton.troy.tanner.data.MuleArea;
 import lamerton.troy.tanner.tasks.*;
 import org.rspeer.runetek.api.commons.StopWatch;
-import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.event.listeners.RenderListener;
 import org.rspeer.runetek.event.types.RenderEvent;
@@ -24,6 +23,13 @@ import java.time.Duration;
         "F2P money making", category =
         ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
+    /*// fill out values ->*/
+    public static boolean restock = false;
+    public static boolean newRingW = false;
+    public static boolean newRingD = false;
+    public static final int muleAmnt = 5500000;
+    public static final int muleKeep = 5000000;
+
     public static final int COWHIDE = 1753;
     public static final int LEATHER_NOTE = 1746;
     public static Location location;
@@ -31,15 +37,8 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean checkedBank = false;
     public static MuleArea muleArea = MuleArea.GE_NW;
     public static boolean isMuling = false;
-    public static boolean newRingW = false;
-    public static boolean newRingD = true;
     public static boolean geSet = false;
     public static int gp = 0;
-
-    // TODO: fill out values ->
-    public static boolean restock = false;
-    public static final int muleAmnt = 6000000;
-    public static final int muleKeep = 5000000;
 
     public static final int[] HIDES = {
             1753, // green dhide
@@ -81,7 +80,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     {
         try {
             leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
-            cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 10;
+            cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 15;
             priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
             priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
         } catch (IOException e) {

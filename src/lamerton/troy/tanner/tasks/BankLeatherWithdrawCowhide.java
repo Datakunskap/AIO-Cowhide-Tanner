@@ -1,9 +1,7 @@
 package lamerton.troy.tanner.tasks;
 
-import lamerton.troy.tanner.ExPriceChecker;
 import lamerton.troy.tanner.Main;
 import org.rspeer.runetek.adapter.component.Item;
-import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
@@ -16,14 +14,14 @@ import java.io.IOException;
 public class BankLeatherWithdrawCowhide extends Task {
 
     private Main taskRunner;
+
     public BankLeatherWithdrawCowhide(Main taskRunner) {
         this.taskRunner = taskRunner;
     }
 
     @Override
     public boolean validate() {
-        return (Conditions.atBank() && !Conditions.gotCowhide() || !Conditions.gotEnoughCoins()) &&
-                !Main.restock && !Main.isMuling;
+        return (!Main.restock && !Main.isMuling) && (Conditions.atBank() && !Conditions.gotCowhide() || !Conditions.gotEnoughCoins());
     }
 
     @Override
@@ -48,14 +46,16 @@ public class BankLeatherWithdrawCowhide extends Task {
                 if (coinsInBank == null) {
                     // not enough coins to continue
                     Log.info("Out of coins");
-                    //this.stopScript();
-                    if(!Bank.isOpen()){
-                        Bank.open(BankLocation.AL_KHARID);
-                        return 1000;
+                    if (!Bank.contains(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*")) &&
+                            !Inventory.contains(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"))) {
+                        Main.newRingW = true;
                     } else {
+                        Log.info("Getting Ring of wealth");
                         Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
-                        Time.sleep(5000);
+                        Time.sleep(3000);
                     }
+                    Log.fine("Restocking");
+                    Bank.close();
 
                     Main.restock = true;
                     return 2000;
@@ -84,16 +84,17 @@ public class BankLeatherWithdrawCowhide extends Task {
                 // not enough cowhide to continue
                 Log.info(cowhideBankAmount);
                 Log.info("Out of dragonhide");
-                if(!Bank.isOpen()){
-                    Bank.open(BankLocation.AL_KHARID);
-                    return 1000;
+                if (!Bank.contains(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*")) &&
+                        !Inventory.contains(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"))) {
+                    Main.newRingW = true;
                 } else {
+                    Log.info("Getting Ring of wealth");
                     Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
-                    Time.sleep(5000);
+                    Time.sleep(3000);
                 }
-
+                Log.fine("Restocking");
+                Bank.close();
                 Main.restock = true;
-                //this.stopScript();
                 return 2000;
             }
         } else {

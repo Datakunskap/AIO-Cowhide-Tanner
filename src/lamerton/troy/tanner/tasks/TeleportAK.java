@@ -15,23 +15,24 @@ public class TeleportAK extends Task {
 
     @Override
     public boolean validate() {
-        if (!Main.location.getGEArea().contains(Players.getLocal())) {
-            Main.restock = false;
-        }
         return !Main.restock && Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling &&
                 hasRing() && !Main.newRingD;
     }
 
     @Override
     public int execute() {
-        Log.fine("Teleporting to AK");
-        dueling();
-        if (hasCharge()) {
-            Log.info("Ring has charge left");
-            Main.newRingD = false;
+        if (!Main.location.getGEArea().contains(Players.getLocal())) {
+            Main.restock = false;
         } else {
-            Log.severe("Ring has no charge");
-            Main.newRingD = true;
+            Log.fine("Teleporting to AK");
+            dueling();
+            if (hasCharge()) {
+                Log.info("Ring has charge left");
+                Main.newRingD = false;
+            } else {
+                Log.severe("Ring has no charge");
+                Main.newRingD = true;
+            }
         }
         return 1000;
     }
