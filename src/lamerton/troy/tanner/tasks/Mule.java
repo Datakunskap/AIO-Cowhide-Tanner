@@ -164,6 +164,7 @@ public class Mule extends Task {
                             Log.fine("Trade completed shutting down mule");
                             logoutMule();
                             muleing = false;
+                            Main.amntMuled += (Coins - Main.muleKeep);
                             if(begWorld != -1) {
                                 WorldHopper.hopTo(begWorld);
                                 Time.sleepUntil(() -> Worlds.getCurrent() == begWorld, 10000);

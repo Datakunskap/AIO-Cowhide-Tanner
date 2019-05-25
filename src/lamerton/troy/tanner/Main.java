@@ -39,7 +39,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean isMuling = false;
     public static boolean geSet = false;
     public static int gp = 0;
-    public static boolean justMuled = false;
+    public static int amntMuled = 0;
 
     public static final int[] HIDES = {
             1753, // green dhide
@@ -183,8 +183,8 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         final Duration durationRunning = this.timeRan == null ? Duration.ofSeconds(0) : this.timeRan.getElapsed();
 
         int totalLeatherValue = this.totalTanned * this.leatherPrice;
-        int totalProfit = totalLeatherValue - this.totalTanned * this.cowhidePrice;
-        int hourlyProfit = this.getHourlyRate(durationRunning) * (this.leatherPrice - this.cowhidePrice);
+        int totalProfit = (totalLeatherValue - this.totalTanned * this.cowhidePrice) + amntMuled;
+        int hourlyProfit = (this.getHourlyRate(durationRunning) * (this.leatherPrice - this.cowhidePrice)) + (this.getHourlyRate(durationRunning) * amntMuled);
         int[] stats = {
                 this.totalTanned,
                 totalProfit,

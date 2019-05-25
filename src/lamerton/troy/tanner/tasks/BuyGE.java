@@ -69,7 +69,7 @@ public class BuyGE extends Task {
             Log.info("Offer set");
         } else {
             Log.info("Waiting to complete");
-            Time.sleepUntil(() -> GrandExchange.getFirstActive() == null, 5000, Integer.MAX_VALUE-1);
+            Time.sleepUntil(() -> GrandExchange.getFirstActive() == null, 5000, 120000);
             GrandExchange.collectAll();
         }
         if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)) {
