@@ -23,16 +23,21 @@ import java.time.Duration;
         "F2P money making", category =
         ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
-    // fill out values ->
+////////////////////////////////////////////////////////////////////////////////////
+/*
+    fill out values ->
+*/
+    // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
+    public static final int COWHIDE = 1749;
     public static boolean newRingW = false;
     public static boolean newRingD = false;
     public static final int muleAmnt = 5100000;
     public static final int muleKeep = 5000000;
-
-    // DO NOT CHANGE
+////////////////////////////////////////////////////////////////////////////////////
+/*
+    DO NOT CHANGE
+*/
     public static boolean restock = false;
-    public static final int COWHIDE = 1753;
-    public static final int LEATHER_NOTE = 1746;
     public static Location location;
     public static boolean sold = false;
     public static boolean checkedBank = false;
@@ -43,20 +48,46 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static int amntMuled = 0;
     public static boolean checkRestock = true;
 
-    public static final int[] HIDES = {
+    public static int[] HIDES = {
+            COWHIDE,
+            1749, // red dhide
             1753, // green dhide
             1739, // cowhide
-            0, // red dhide
-            0, // blue dhide
-            0, // black dhide
+            1751, // blue dhide
+            1747, // black dhide
     };
-    public static final int[] LEATHERS = {
+    public static int[] LEATHERS = {
+            2507, // red dhide leather
             1745, // green dhide leather
             1741, // leather
-            1, // red dhide leather
-            1, // blue dhide leather
-            1, // black dhide leather
+            2505, // blue dhide leather
+            2509, // black dhide leather
     };
+    public static int LEATHER_NOTE = LEATHERS[0]+1;
+
+    public static void setLeather() {
+        // Cow
+        if (Main.COWHIDE == 1739) {
+            LEATHERS[0] = 1741;
+        }
+        // Green
+        if (Main.COWHIDE == 1753) {
+            LEATHERS[0] = 1745;
+        }
+        // Blue
+        if (Main.COWHIDE == 1751) {
+            LEATHERS[0] = 2505;
+        }
+        // Red
+        if (Main.COWHIDE == 1749) {
+            LEATHERS[0] = 2507;
+        }
+        // Black
+        if (Main.COWHIDE == 1747) {
+            LEATHERS[0] = 2509;
+        }
+        LEATHER_NOTE = LEATHERS[0]+1;
+    }
 
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
 
@@ -84,8 +115,9 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static void setPrices() {
         {
             try {
+                Log.info("Getting prices");
                 leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
-                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 10;
+                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 20;
                 priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
                 priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
             } catch (IOException e) {
@@ -100,6 +132,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     @Override
     public void onStart() {
         location = Location.GE_AREA;
+        setLeather();
         setPrices();
 
         javax.swing.SwingUtilities.invokeLater(() -> {
