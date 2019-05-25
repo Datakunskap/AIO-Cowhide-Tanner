@@ -37,7 +37,11 @@ public class TeleportGE extends Task {
         if (!EquipmentSlot.RING.getItem().getName().equals("Ring of wealth") && EquipmentSlot.RING.interact("Grand exchange")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
-            if (!hasCharge()) {
+            if (hasCharge()) {
+                Log.info("Ring has charge left");
+                Main.newRingW = false;
+            } else {
+                Log.severe("Ring has no charge");
                 Main.newRingW = true;
             }
         } else {

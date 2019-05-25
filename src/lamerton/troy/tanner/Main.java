@@ -24,10 +24,10 @@ import java.time.Duration;
         ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
     /*// fill out values ->*/
-    public static boolean restock = false;
+    public static boolean restock = true;
     public static boolean newRingW = false;
     public static boolean newRingD = false;
-    public static final int muleAmnt = 5500000;
+    public static final int muleAmnt = 5100000;
     public static final int muleKeep = 5000000;
 
     public static final int COWHIDE = 1753;
@@ -39,6 +39,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean isMuling = false;
     public static boolean geSet = false;
     public static int gp = 0;
+    public static boolean justMuled = false;
 
     public static final int[] HIDES = {
             1753, // green dhide
@@ -77,15 +78,17 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static int priceRingW;
     public static int priceRingD;
 
-    {
-        try {
-            leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
-            cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 15;
-            priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
-            priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
-        } catch (IOException e) {
-            Log.severe("Failed getting price");
-            e.printStackTrace();
+    public static void setPrices() {
+        {
+            try {
+                leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
+                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 15;
+                priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
+                priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
+            } catch (IOException e) {
+                Log.severe("Failed getting price");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -93,6 +96,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     @Override
     public void onStart() {
+        setPrices();
         location = Location.GE_AREA;
         javax.swing.SwingUtilities.invokeLater(() -> {
             // TODO: remove gui -> auto detect hides in inventory/bank

@@ -15,24 +15,20 @@ public class TeleportAK extends Task {
 
     @Override
     public boolean validate() {
-        return !Main.restock && Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling &&
-                hasRing() && !Main.newRingD;
+        return !Main.restock && (Main.location.getGEArea().contains(Players.getLocal()) || Main.muleArea.getMuleArea().contains(Players.getLocal())) &&
+                !Main.isMuling && hasRing() && !Main.newRingD;
     }
 
     @Override
     public int execute() {
-        if (!Main.location.getGEArea().contains(Players.getLocal())) {
-            Main.restock = false;
+        Log.fine("Teleporting to AK");
+        dueling();
+        if (hasCharge()) {
+            Log.info("Ring has charge left");
+            Main.newRingD = false;
         } else {
-            Log.fine("Teleporting to AK");
-            dueling();
-            if (hasCharge()) {
-                Log.info("Ring has charge left");
-                Main.newRingD = false;
-            } else {
-                Log.severe("Ring has no charge");
-                Main.newRingD = true;
-            }
+            Log.severe("Ring has no charge");
+            Main.newRingD = true;
         }
         return 1000;
     }
@@ -41,8 +37,12 @@ public class TeleportAK extends Task {
         if (!EquipmentSlot.RING.getItem().getName().equals("Ring of dueling") && EquipmentSlot.RING.interact("Duel Arena")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
-            if (!hasCharge()) {
-                Main.newRingW = true;
+            if (hasCharge()) {
+                Log.info("Ring has charge left");
+                Main.newRingD = false;
+            } else {
+                Log.severe("Ring has no charge");
+                Main.newRingD = true;
             }
         } else {
             for (Item item : Inventory.getItems()) {
@@ -56,16 +56,26 @@ public class TeleportAK extends Task {
         }
     }
 
-    private boolean hasRing(){
-        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling")) || Inventory.contains(i -> i != null && i.getName().contains("Ring of dueling"))){
+    /*private boolean checkMuleTeleport(boolean checkT) {
+        if (!checkT && Main.muleArea.getMuleArea().contains(Players.getLocal())) {
+            return true;
+        }
+        if (checkT && !Main.muleArea.getMuleArea().contains(Players.getLocal())) {
+            return true;
+        }
+        return false;
+    }*/
+
+    private boolean hasRing() {
+        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling")) || Inventory.contains(i -> i != null && i.getName().contains("Ring of dueling"))) {
             return true;
         }
         return false;
     }
 
-    private static boolean hasCharge(){
+    private static boolean hasCharge() {
         // if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) && !Equipment.contains("Ring of wealth")) {
-        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling"))){
+        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling"))) {
             String[] actions = EquipmentSlot.RING.getActions();
             for (String a : actions) {
                 if (a.toLowerCase().contains("duel")) {

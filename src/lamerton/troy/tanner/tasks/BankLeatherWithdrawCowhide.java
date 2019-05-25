@@ -58,6 +58,7 @@ public class BankLeatherWithdrawCowhide extends Task {
                     Bank.close();
 
                     Main.restock = true;
+                    Main.setPrices();
                     return 2000;
                 } else {
                     // need more coins
@@ -95,6 +96,7 @@ public class BankLeatherWithdrawCowhide extends Task {
                 Log.fine("Restocking");
                 Bank.close();
                 Main.restock = true;
+                Main.setPrices();
                 return 2000;
             }
         } else {

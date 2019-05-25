@@ -2,15 +2,20 @@ package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.ExGrandExchange;
 import lamerton.troy.tanner.Main;
+import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.GrandExchangeSetup;
+import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Equipment;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.input.Keyboard;
+import org.rspeer.runetek.api.input.menu.ActionOpcodes;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
+import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
@@ -54,29 +59,37 @@ public class BuyGE extends Task {
             Main.sold = false;
             Main.checkedBank = false;
             Main.restock = false;
+            closeGE();
         }
 
         buyQuantity = Main.gp / (Main.cowhidePrice);
 
         Log.fine("Buying hides");
-        if (ExGrandExchange.buy(Main.COWHIDE, buyQuantity, Main.cowhidePrice, false)) {
-            Time.sleep(600);
+        if (GrandExchange.getFirstActive() == null && ExGrandExchange.buy(Main.COWHIDE, buyQuantity, Main.cowhidePrice, false)) {
+            Log.info("Offer set");
+        } else {
+            Log.info("Waiting to complete");
+            Time.sleepUntil(() -> GrandExchange.getFirstActive() == null, 5000, Integer.MAX_VALUE-1);
             GrandExchange.collectAll();
-            Time.sleep(Random.mid(300, 600));
-            GrandExchange.collectAll();
-            Time.sleep(Random.mid(300, 600));
-            GrandExchange.collectAll();
-
-            if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)) {
-                if (Time.sleepUntil(() -> Inventory.getCount(true, Main.COWHIDE) >= buyQuantity || Inventory.getCount(true, Main.COWHIDE+1) >= buyQuantity, 5000)) {
-                    Log.fine("Done buying");
-                    Main.sold = false;
-                    Main.checkedBank = false;
-                    Main.restock = false;
-                }
+        }
+        if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)) {
+            if (Time.sleepUntil(() -> Inventory.getCount(true, Main.COWHIDE) >= buyQuantity || Inventory.getCount(true, Main.COWHIDE+1) >= buyQuantity, 5000)) {
+                Log.fine("Done buying");
+                Main.sold = false;
+                Main.checkedBank = false;
+                Main.restock = false;
+                closeGE();
             }
         }
         return 1000;
+    }
+
+    private void closeGE() {
+        while(GrandExchange.isOpen() || GrandExchangeSetup.isOpen()) {
+            InterfaceComponent X = Interfaces.getComponent(465, 2, 11);
+            X.interact(ActionOpcodes.INTERFACE_ACTION);
+        }
+
     }
 
     private void buyRingW(){
