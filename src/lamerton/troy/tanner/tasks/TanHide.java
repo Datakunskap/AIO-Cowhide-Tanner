@@ -53,7 +53,7 @@ public class TanHide extends Task {
             if (leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
                 // wait for all cowhides to turn into leather
                 if (Time.sleepUntil(() -> !Conditions.gotCowhide(), 3000)) {
-                    taskRunner.totalTanned += Inventory.getCount("Green dragon leather");
+                    taskRunner.totalTanned += Inventory.getCount(taskRunner.LEATHERS[0]);
                     return 300;
                 }
             }

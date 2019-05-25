@@ -28,7 +28,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     fill out values ->
 */
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
-    public static final int COWHIDE = 1749;
+    public static final int COWHIDE = 1747;
     public static boolean newRingW = false;
     public static boolean newRingD = false;
     public static final int muleAmnt = 5100000;
@@ -136,7 +136,6 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         setPrices();
 
         javax.swing.SwingUtilities.invokeLater(() -> {
-            // TODO: remove gui -> auto detect hides in inventory/bank
             new SimpleTannerGUI(this);
         });
 
