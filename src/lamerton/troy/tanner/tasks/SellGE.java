@@ -6,6 +6,7 @@ import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer;
@@ -52,6 +53,7 @@ public class SellGE extends Task {
             Time.sleep(Random.mid(300, 600));
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
+            Keyboard.pressEnter();
         }
 
         if (GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
