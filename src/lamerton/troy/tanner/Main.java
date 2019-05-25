@@ -52,7 +52,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     };
     public static final int[] LEATHERS = {
             1745, // green dhide leather
-            //1741, // leather
+            1741, // leather
             1, // red dhide leather
             1, // blue dhide leather
             1, // black dhide leather
@@ -188,7 +188,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         final Duration durationRunning = this.timeRan == null ? Duration.ofSeconds(0) : this.timeRan.getElapsed();
 
         int totalLeatherValue = this.totalTanned * this.leatherPrice;
-        int totalProfit = (totalLeatherValue - this.totalTanned * this.cowhidePrice) + amntMuled;
+        int totalProfit = (totalLeatherValue - this.totalTanned * this.cowhidePrice);
         int hourlyProfit = this.getHourlyRate(durationRunning) * (this.leatherPrice - this.cowhidePrice);
         int[] stats = {
                 this.totalTanned,
