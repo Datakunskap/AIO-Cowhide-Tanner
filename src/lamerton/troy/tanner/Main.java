@@ -23,13 +23,14 @@ import java.time.Duration;
         "F2P money making", category =
         ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
-    /*// fill out values ->*/
-    public static boolean restock = true;
+    // fill out values ->
     public static boolean newRingW = false;
     public static boolean newRingD = false;
     public static final int muleAmnt = 5100000;
     public static final int muleKeep = 5000000;
 
+    // DO NOT CHANGE
+    public static boolean restock = false;
     public static final int COWHIDE = 1753;
     public static final int LEATHER_NOTE = 1746;
     public static Location location;
@@ -40,6 +41,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean geSet = false;
     public static int gp = 0;
     public static int amntMuled = 0;
+    public static boolean checkRestock = true;
 
     public static final int[] HIDES = {
             1753, // green dhide
@@ -50,7 +52,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     };
     public static final int[] LEATHERS = {
             1745, // green dhide leather
-            1741, // leather
+            //1741, // leather
             1, // red dhide leather
             1, // blue dhide leather
             1, // black dhide leather
@@ -60,6 +62,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     private final Task[] TASKS = {
             new Mule(),
+            new checkRestock(this),
             new TeleportGE(),
             new TeleportAK(),
             new WalkToGE(),
@@ -82,7 +85,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         {
             try {
                 leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
-                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 15;
+                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 10;
                 priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
                 priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
             } catch (IOException e) {
@@ -96,14 +99,16 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     @Override
     public void onStart() {
-        setPrices();
         location = Location.GE_AREA;
+        setPrices();
+
         javax.swing.SwingUtilities.invokeLater(() -> {
             // TODO: remove gui -> auto detect hides in inventory/bank
             new SimpleTannerGUI(this);
         });
+
         submit(TASKS);
-        this.setPaused(true);
+        //this.setPaused(true);
     }
 
     @Override
@@ -184,7 +189,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
         int totalLeatherValue = this.totalTanned * this.leatherPrice;
         int totalProfit = (totalLeatherValue - this.totalTanned * this.cowhidePrice) + amntMuled;
-        int hourlyProfit = (this.getHourlyRate(durationRunning) * (this.leatherPrice - this.cowhidePrice)) + (this.getHourlyRate(durationRunning) * amntMuled);
+        int hourlyProfit = this.getHourlyRate(durationRunning) * (this.leatherPrice - this.cowhidePrice);
         int[] stats = {
                 this.totalTanned,
                 totalProfit,

@@ -23,9 +23,13 @@ public class Banking {//extends Task {
             Bank.depositInventory();
             Time.sleep(4000);
 
-            // Keep X gold for tanning
             Main.gp = Bank.getCount(995);
-            Main.gp -= Main.gp / 70;
+            // Keep X gp for tanning
+            int tanningGp = (Main.gp / Main.cowhidePrice) * 20;
+            if (tanningGp > 90000){
+                tanningGp -= 25000;
+            }
+            Main.gp -= tanningGp;
 
             Time.sleep(1000);
             Bank.withdrawAll(995);

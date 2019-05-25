@@ -36,10 +36,10 @@ public class BuyGE extends Task {
         if (Equipment.contains(2552)) {
             Main.newRingD = false;
         }
-        if (Main.newRingW && Main.gp >= 50000) {
+        if (Main.newRingW) {
             buyRingW();
         }
-        if (Main.newRingD && Main.gp >= 50000) {
+        if (Main.newRingD) {
             buyRingD();
         }
         if (Inventory.contains(11980)) {
@@ -62,18 +62,19 @@ public class BuyGE extends Task {
             closeGE();
         }
 
-        buyQuantity = Main.gp / (Main.cowhidePrice);
+        buyQuantity = Main.gp / Main.cowhidePrice;
 
-        Log.fine("Buying hides");
         if (GrandExchange.getFirstActive() == null && ExGrandExchange.buy(Main.COWHIDE, buyQuantity, Main.cowhidePrice, false)) {
-            Log.info("Offer set");
+            Log.fine("Buying hides");
         } else {
             Log.info("Waiting to complete");
-            Time.sleepUntil(() -> GrandExchange.getFirstActive() == null, 5000, 120000);
+            Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED), 2000, 10000);
             GrandExchange.collectAll();
+            Keyboard.pressEnter();
         }
         if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)) {
-            if (Time.sleepUntil(() -> Inventory.getCount(true, Main.COWHIDE) >= buyQuantity || Inventory.getCount(true, Main.COWHIDE+1) >= buyQuantity, 5000)) {
+            if (Time.sleepUntil(() -> (Inventory.getCount(true, Main.COWHIDE) +
+                    Inventory.getCount(true, Main.COWHIDE+1)) >= buyQuantity, 5000)) {
                 Log.fine("Done buying");
                 Main.sold = false;
                 Main.checkedBank = false;

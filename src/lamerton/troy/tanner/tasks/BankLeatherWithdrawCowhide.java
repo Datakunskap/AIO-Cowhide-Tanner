@@ -37,9 +37,9 @@ public class BankLeatherWithdrawCowhide extends Task {
                 return Random.nextInt(100, 220);
             }
 
-            // handle coins
-            final Item coinsInventory = Inventory.getFirst("Coins");
-            final int coinsAmount = coinsInventory != null ? coinsInventory.getStackSize() : 0;
+            // Coins and Hides amount
+            // final int coinsAmount = Inventory.getCount(true, 996);
+            final int hidesAmount = Bank.getCount(Main.COWHIDE);
 
             if (!Conditions.gotEnoughCoins()) {
                 Item coinsInBank = Bank.getFirst("Coins");
@@ -67,7 +67,8 @@ public class BankLeatherWithdrawCowhide extends Task {
                     return Random.nextInt(200, 420);
                 }
             }
-            Log.info("Coins left", coinsAmount);
+            // Log.info("Coins left", coinsAmount);
+            Log.info("Hides left", hidesAmount);
 
             final Item cowhide = Bank.getFirst(Main.COWHIDE);
             final int cowhideBankAmount = cowhide == null ? 0 : cowhide.getStackSize();
