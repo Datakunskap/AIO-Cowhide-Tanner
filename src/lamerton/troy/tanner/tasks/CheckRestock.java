@@ -62,7 +62,14 @@ public class CheckRestock extends Task {
             hasH = true;
         }
         if (!hasH || !hasD || !hasW) {
-            Log.fine("Restocking");
+            Log.fine("Restocking: ->");
+            Time.sleep(1000);
+            if (!hasH)
+                Main.printHide();
+            if (!hasW)
+                Log.fine("Ring of wealth");
+            if (!hasD)
+                Log.fine("Ring of dueling");
             Main.restock = true;
         } else {
             Main.restock = false;
