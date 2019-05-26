@@ -29,7 +29,6 @@ public class SellGE extends Task {
             Main.checkedBank = true;
         }
 
-        Log.fine("Selling leathers");
         if (!GrandExchange.isOpen()) {
             Npcs.getNearest("Grand Exchange Clerk").interact("Exchange");
             Time.sleep(Main.randInt(700, 1300));
@@ -37,6 +36,7 @@ public class SellGE extends Task {
         }
 
         if (Inventory.contains(Main.LEATHER_NOTE) && !Main.geSet) {
+            Log.fine("Selling Leathers");
             GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL);
             Time.sleep(800);
             GrandExchangeSetup.setItem(Main.LEATHER_NOTE);
@@ -98,8 +98,10 @@ public class SellGE extends Task {
         }
 
         Main.checkTime();
+        Log.info( "Waiting to complete | Time: " + Main.elapsedSeconds/60 + "min(s)");
         if(Main.elapsedSeconds > Main.resetGeTime * 60 &&
                 GrandExchange.getFirstActive() != null) {
+            Log.fine("Decreasing leather price by: " + Main.intervalAmnt);
             GrandExchange.getFirstActive().abort();
             Time.sleep(3000);
             GrandExchange.collectAll();

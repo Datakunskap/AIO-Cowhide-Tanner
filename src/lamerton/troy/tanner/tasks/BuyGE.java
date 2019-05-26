@@ -59,9 +59,9 @@ public class BuyGE extends Task {
         }
 
         if (GrandExchange.getFirstActive() == null && ExGrandExchange.buy(Main.COWHIDE, buyQuantity, Main.cowhidePrice, false)) {
-            Log.fine("Buying hides");
+            Log.fine("Buying Hides");
         } else {
-            Log.info("Waiting to complete");
+            Log.info("Waiting to complete | Time: " + Main.elapsedSeconds/60 + "min(s)");
             if (!GrandExchange.isOpen()) {
                 Npcs.getNearest("Grand Exchange Clerk").interact("Exchange");
                 Time.sleep(Main.randInt(700, 1300));
@@ -85,6 +85,7 @@ public class BuyGE extends Task {
         Main.checkTime();
         if(Main.elapsedSeconds > Main.resetGeTime * 60 &&
                 GrandExchange.getFirstActive() != null) {
+            Log.fine("Increasing hide price by: " + Main.intervalAmnt);
             GrandExchange.getFirstActive().abort();
             Time.sleep(3000);
             GrandExchange.collectAll();

@@ -32,36 +32,36 @@ public class CheckRestock extends Task {
             closeGE();
         }
 
-        boolean checkW = false;
-        boolean checkD = false;
-        boolean checkH = false;
+        boolean hasW = false;
+        boolean hasD = false;
+        boolean hasH = false;
 
         if (Rings.hasChargedRingW()) {
-            checkW = true;
+            hasW = true;
         }
         if (Rings.hasChargedRingD()) {
-            checkD = true;
+            hasD = true;
         }
         if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE + 1)) {
-            checkH = true;
+            hasH = true;
         }
 
         while (!Bank.isOpen()) {
             Bank.open();
             Time.sleep(1000);
         }
-        if (!checkW && !Bank.contains(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"))) {
+        if (!hasW && Bank.contains(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"))) {
             Main.newRingW = true;
-            checkW = true;
+            hasW = true;
         }
-        if (!checkD && !Bank.contains(x -> x != null && x.getName().contains("dueling") && x.getName().matches(".*\\d+.*"))) {
+        if (!hasD && Bank.contains(x -> x != null && x.getName().contains("dueling") && x.getName().matches(".*\\d+.*"))) {
             Main.newRingD = true;
-            checkD = true;
+            hasD = true;
         }
-        if (!checkH && Bank.contains(Main.COWHIDE) || Bank.contains(Main.COWHIDE + 1)) {
-            checkH = true;
+        if (!hasH && Bank.contains(Main.COWHIDE) || Bank.contains(Main.COWHIDE + 1)) {
+            hasH = true;
         }
-        if (!checkH || !checkD || !checkW) {
+        if (!hasH || !hasD || !hasW) {
             Log.fine("Restocking");
             Main.restock = true;
         } else {

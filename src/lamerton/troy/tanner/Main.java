@@ -28,7 +28,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     fill out values ->
 */
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
-    public static int COWHIDE = 1753;
+    public static int COWHIDE = 1751;
     // Switches to max profit hide after selling leathers
     public static boolean restockMaxProfitHide = true;
     // Needs to be restocking
@@ -97,7 +97,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
         // Switch to second highest if just tanned
         if (maxH == prevH) {
-            Log.info("Same Hide -> Getting Second Highest");
+            Log.info("Same Hide -> Setting Second Highest");
             int[] temp = new int[HIDES.length-1];
             int x = 0;
             for (int i=0; i<HIDES.length; i++){
