@@ -1,6 +1,7 @@
 package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.Main;
+import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
@@ -24,7 +25,7 @@ public class TeleportGE extends Task {
     public int execute() {
         Log.fine("Teleporting to GE");
         wealth();
-        if (hasCharge()) {
+        if (Rings.hasChargedRingW()) {
             Log.info("Ring has charge left");
             Main.newRingW = false;
         } else {
@@ -38,7 +39,7 @@ public class TeleportGE extends Task {
         if (!EquipmentSlot.RING.getItem().getName().equals("Ring of wealth") && EquipmentSlot.RING.interact("Grand exchange")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
-            if (hasCharge()) {
+            if (Rings.hasChargedRingW()) {
                 Log.info("Ring has charge left");
                 Main.newRingW = false;
             } else {
@@ -60,19 +61,6 @@ public class TeleportGE extends Task {
     private boolean hasRing(){
         if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) || Inventory.contains(i -> i != null && i.getName().contains("Ring of wealth"))){
             return true;
-        }
-        return false;
-    }
-
-    private static boolean hasCharge(){
-        // if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) && !Equipment.contains("Ring of wealth")) {
-        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth"))){
-            String[] actions = EquipmentSlot.RING.getActions();
-            for (String a : actions) {
-                if (a.toLowerCase().contains("exchange")) {
-                    return true;
-                }
-            }
         }
         return false;
     }

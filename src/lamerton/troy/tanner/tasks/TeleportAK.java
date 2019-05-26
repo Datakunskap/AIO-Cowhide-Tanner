@@ -1,6 +1,7 @@
 package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.Main;
+import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.tab.Equipment;
@@ -23,7 +24,7 @@ public class TeleportAK extends Task {
     public int execute() {
         Log.fine("Teleporting to AK");
         dueling();
-        if (hasCharge()) {
+        if (Rings.hasChargedRingD()) {
             Log.info("Ring has charge left");
             Main.newRingD = false;
         } else {
@@ -37,7 +38,7 @@ public class TeleportAK extends Task {
         if (!EquipmentSlot.RING.getItem().getName().equals("Ring of dueling") && EquipmentSlot.RING.interact("Duel Arena")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
-            if (hasCharge()) {
+            if (Rings.hasChargedRingD()) {
                 Log.info("Ring has charge left");
                 Main.newRingD = false;
             } else {
@@ -56,32 +57,9 @@ public class TeleportAK extends Task {
         }
     }
 
-    /*private boolean checkMuleTeleport(boolean checkT) {
-        if (!checkT && Main.muleArea.getMuleArea().contains(Players.getLocal())) {
-            return true;
-        }
-        if (checkT && !Main.muleArea.getMuleArea().contains(Players.getLocal())) {
-            return true;
-        }
-        return false;
-    }*/
-
     private boolean hasRing() {
         if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling")) || Inventory.contains(i -> i != null && i.getName().contains("Ring of dueling"))) {
             return true;
-        }
-        return false;
-    }
-
-    private static boolean hasCharge() {
-        // if (Equipment.contains(i -> i != null && i.getName().contains("Ring of wealth")) && !Equipment.contains("Ring of wealth")) {
-        if (Equipment.contains(i -> i != null && i.getName().contains("Ring of dueling"))) {
-            String[] actions = EquipmentSlot.RING.getActions();
-            for (String a : actions) {
-                if (a.toLowerCase().contains("duel")) {
-                    return true;
-                }
-            }
         }
         return false;
     }

@@ -87,7 +87,7 @@ public class SellGE extends Task {
             Main.geSet = false;
             Log.info("Done selling 2");
 
-            if (Main.restockMaxProfitHide) {
+            if (Main.calcMacProfitOnStart && Main.restockMaxProfitHide) {
                 Log.fine("Calculating most profitable hide...");
                 try {
                     Main.setMaxProfitHide();

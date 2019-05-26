@@ -2,6 +2,7 @@ package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.ExGrandExchange;
 import lamerton.troy.tanner.Main;
+import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
@@ -30,23 +31,13 @@ public class BuyGE extends Task {
 
     @Override
     public int execute() {
-        if (Inventory.contains(11980)) {
-            Main.newRingW = false;
-        }
-        if (Equipment.contains(2552)) {
-            Main.newRingD = false;
-        }
         if (Main.newRingW) {
             buyRingW();
+            Main.newRingW = false;
         }
         if (Main.newRingD) {
             buyRingD();
-        }
-        if (Inventory.contains(11980)) {
-            Main.newRingW = false;
-        }
-        if (Equipment.contains(2552)) {
-            Main.newRingD = false;
+            Main.newRingD =false;
         }
 
         if (!Main.checkedBank) {
@@ -63,15 +54,22 @@ public class BuyGE extends Task {
         }
 
         buyQuantity = Main.gp / Main.cowhidePrice;
+        if(Main.COWHIDE == 1739) {
+            buyQuantity = 3000;
+        }
 
         if (GrandExchange.getFirstActive() == null && ExGrandExchange.buy(Main.COWHIDE, buyQuantity, Main.cowhidePrice, false)) {
             Log.fine("Buying hides");
         } else {
             Log.info("Waiting to complete");
+            if (!GrandExchange.isOpen()) {
+                Npcs.getNearest("Grand Exchange Clerk").interact("Exchange");
+                Time.sleep(Main.randInt(700, 1300));
+            }
             Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED), 2000, 10000);
             GrandExchange.collectAll();
-            Keyboard.pressEnter();
         }
+
         if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)) {
             if (Time.sleepUntil(() -> (Inventory.getCount(true, Main.COWHIDE) +
                     Inventory.getCount(true, Main.COWHIDE+1)) >= buyQuantity, 5000)) {

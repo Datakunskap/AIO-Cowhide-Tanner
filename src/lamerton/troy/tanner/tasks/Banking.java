@@ -25,11 +25,13 @@ public class Banking {//extends Task {
 
             Main.gp = Bank.getCount(995);
             // Keep X gp for tanning
-            int tanningGp = (Main.gp / Main.cowhidePrice) * 20;
-            if (tanningGp > 90000){
-                tanningGp -= 25000;
+            if (Main.COWHIDE != 1739) {
+                int tanningGp = (Main.gp / Main.cowhidePrice) * 20;
+                if (tanningGp > 90000) {
+                    tanningGp -= 25000;
+                }
+                Main.gp -= tanningGp;
             }
-            Main.gp -= tanningGp;
 
             Time.sleep(1000);
             Bank.withdrawAll(995);
@@ -45,9 +47,7 @@ public class Banking {//extends Task {
         }
         Bank.close();
         Time.sleepUntil(() -> !Bank.isOpen(), 2000);
-
-        // Reset/check prices
-        Main.setPrices();
+        // Main.setPrices();
         return 1000;
     }
 }

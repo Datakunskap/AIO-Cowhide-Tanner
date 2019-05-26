@@ -29,14 +29,21 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 */
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
     public static int COWHIDE = 1751;
+    // Switches to max profit hide after selling leathers
     public static boolean restockMaxProfitHide = true;
+    // Needs to be restocking
+    public static boolean calcMacProfitOnStart = true;
+    // Increase buying GP per hide
+    private static int addHidePrice = 20;
+    // Decrease selling GP per leather
+    private static int subLeatherPrice = 10;
     public static final int muleAmnt = 5100000;
     public static final int muleKeep = 5000000;
 ////////////////////////////////////////////////////////////////////////////////////
 /*
     DO NOT CHANGE
 */
-    public static boolean restock = false;
+    public static boolean restock = true;
     public static boolean newRingW = false;
     public static boolean newRingD = false;
     public static Location location;
@@ -69,7 +76,10 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     public static void setMaxProfitHide() throws IOException {
         int maxH = COWHIDE;
+        int prevH = COWHIDE;
         int maxP = leatherPrice - cowhidePrice;
+
+        // Sets highest profit hide
         for(int h : HIDES) {
             COWHIDE = h;
             setLeather();
@@ -78,9 +88,32 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
                 maxH = h;
             }
         }
+
+        // Switch to second highest if just tanned
+        if (maxH == prevH) {
+            int[] temp = new int[HIDES.length-1];
+            int x = 0;
+            for (int i=0; i<HIDES.length; i++){
+                if(HIDES[i] != prevH){
+                    temp[x] = HIDES[i];
+                    x++;
+                }
+            }
+            maxP = 0;
+            for(int h : temp) {
+                COWHIDE = h;
+                setLeather();
+                setPrices();
+                if ((leatherPrice - cowhidePrice) > maxP) {
+                    maxH = h;
+                }
+            }
+        }
+
         COWHIDE = maxH;
         setLeather();
         setPrices();
+        printHide();
     }
 
     public static void setLeather() {
@@ -111,7 +144,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     private final Task[] TASKS = {
             new Mule(),
-            new checkRestock(this),
+            new CheckRestock(),
             new TeleportGE(),
             new TeleportAK(),
             new WalkToGE(),
@@ -133,9 +166,9 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static void setPrices() {
         {
             try {
-                Log.info("Getting prices");
-                leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]) - 10;
-                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 20;
+                Log.info("Setting prices");
+                leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]) - subLeatherPrice;
+                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + addHidePrice;
                 priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
                 priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
             } catch (IOException e) {
@@ -255,5 +288,28 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         java.util.Random rand = new java.util.Random();
         int randomNum = rand.nextInt(max - min + 1) + min;
         return randomNum;
+    }
+
+    public static void printHide(){
+        // Cow
+        if (Main.COWHIDE == 1739) {
+            Log.fine("Cowhide");
+        }
+        // Green
+        if (Main.COWHIDE == 1753) {
+            Log.fine("Green Dragonhide");
+        }
+        // Blue
+        if (Main.COWHIDE == 1751) {
+            Log.fine("Blue Dragonhide");
+        }
+        // Red
+        if (Main.COWHIDE == 1749) {
+            Log.fine("Red Dragonhide");
+        }
+        // Black
+        if (Main.COWHIDE == 1747) {
+            Log.fine("Black Dragonhide");
+        }
     }
 }
