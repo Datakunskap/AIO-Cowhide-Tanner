@@ -28,7 +28,7 @@ public class TanHide extends Task {
     @Override
     public int execute() {
         if (Conditions.tanInterfaceIsOpen()) {
-            InterfaceComponent leatherComponent;
+            InterfaceComponent leatherComponent = null;
             // Cow
             if (Main.COWHIDE == 1739) {
                 leatherComponent = Interfaces.getComponent(324, 124);

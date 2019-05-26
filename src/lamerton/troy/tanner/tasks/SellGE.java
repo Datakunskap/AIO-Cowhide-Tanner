@@ -13,6 +13,8 @@ import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
+import java.io.IOException;
+
 public class SellGE extends Task {
 
     @Override
@@ -67,6 +69,15 @@ public class SellGE extends Task {
             Main.checkedBank = false;
             Main.geSet = false;
             Log.info("Done selling");
+
+            if (Main.restockMaxProfitHide) {
+                Log.fine("Calculating most profitable hide...");
+                try {
+                    Main.setMaxProfitHide();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         if (GrandExchange.getFirstActive() == null && !GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
@@ -75,6 +86,15 @@ public class SellGE extends Task {
             Main.checkedBank = false;
             Main.geSet = false;
             Log.info("Done selling 2");
+
+            if (Main.restockMaxProfitHide) {
+                Log.fine("Calculating most profitable hide...");
+                try {
+                    Main.setMaxProfitHide();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return 1000;
 

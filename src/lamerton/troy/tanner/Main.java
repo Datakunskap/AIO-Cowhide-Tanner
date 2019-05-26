@@ -28,9 +28,8 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     fill out values ->
 */
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
-    public static final int COWHIDE = 1747;
-    public static boolean newRingW = false;
-    public static boolean newRingD = false;
+    public static int COWHIDE = 1751;
+    public static boolean restockMaxProfitHide = true;
     public static final int muleAmnt = 5100000;
     public static final int muleKeep = 5000000;
 ////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +37,8 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     DO NOT CHANGE
 */
     public static boolean restock = false;
+    public static boolean newRingW = false;
+    public static boolean newRingD = false;
     public static Location location;
     public static boolean sold = false;
     public static boolean checkedBank = false;
@@ -49,14 +50,15 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean checkRestock = true;
 
     public static int[] HIDES = {
-            COWHIDE,
-            1749, // red dhide
             1753, // green dhide
-            1739, // cowhide
+            1749, // red dhide
             1751, // blue dhide
             1747, // black dhide
+            1739, // cowhide
     };
+
     public static int[] LEATHERS = {
+            -1, // placeholder
             2507, // red dhide leather
             1745, // green dhide leather
             1741, // leather
@@ -64,6 +66,22 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
             2509, // black dhide leather
     };
     public static int LEATHER_NOTE = LEATHERS[0]+1;
+
+    public static void setMaxProfitHide() throws IOException {
+        int maxH = COWHIDE;
+        int maxP = leatherPrice - cowhidePrice;
+        for(int h : HIDES) {
+            COWHIDE = h;
+            setLeather();
+            setPrices();
+            if ((leatherPrice - cowhidePrice) > maxP) {
+                maxH = h;
+            }
+        }
+        COWHIDE = maxH;
+        setLeather();
+        setPrices();
+    }
 
     public static void setLeather() {
         // Cow
@@ -116,7 +134,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         {
             try {
                 Log.info("Getting prices");
-                leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
+                leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]) - 10;
                 cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + 20;
                 priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
                 priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
