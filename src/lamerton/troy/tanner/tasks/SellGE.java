@@ -96,8 +96,18 @@ public class SellGE extends Task {
                 }
             }
         }
-        return 1000;
 
+        Main.checkTime();
+        if(Main.elapsedSeconds > Main.resetGeTime * 60 &&
+                GrandExchange.getFirstActive() != null) {
+            GrandExchange.getFirstActive().abort();
+            Time.sleep(3000);
+            GrandExchange.collectAll();
+            Main.subLeatherPrice += Main.intervalAmnt;
+            Main.setPrices();
+        }
+
+        return 1000;
 
         /*if (!ExGrandExchange.sell(Main.LEATHER_NOTE, 0, Main.leatherPrice, false)) {
             while (GrandExchange.getFirstActive().getProgress().equals(RSGrandExchangeOffer.Progress.IN_PROGRESS)) {

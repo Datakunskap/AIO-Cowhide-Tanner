@@ -47,7 +47,8 @@ public class Banking {//extends Task {
         }
         Bank.close();
         Time.sleepUntil(() -> !Bank.isOpen(), 2000);
-        // Main.setPrices();
+        Main.setPrices();
+        Main.startTime = System.currentTimeMillis();
         return 1000;
     }
 }

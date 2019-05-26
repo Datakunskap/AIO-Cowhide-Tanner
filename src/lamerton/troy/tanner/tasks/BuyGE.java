@@ -55,7 +55,7 @@ public class BuyGE extends Task {
 
         buyQuantity = Main.gp / Main.cowhidePrice;
         if(Main.COWHIDE == 1739) {
-            buyQuantity = 3000;
+            buyQuantity = 2300;
         }
 
         if (GrandExchange.getFirstActive() == null && ExGrandExchange.buy(Main.COWHIDE, buyQuantity, Main.cowhidePrice, false)) {
@@ -78,7 +78,18 @@ public class BuyGE extends Task {
                 Main.checkedBank = false;
                 Main.restock = false;
                 closeGE();
+                Main.startTime = System.currentTimeMillis();
             }
+        }
+
+        Main.checkTime();
+        if(Main.elapsedSeconds > Main.resetGeTime * 60 &&
+                GrandExchange.getFirstActive() != null) {
+            GrandExchange.getFirstActive().abort();
+            Time.sleep(3000);
+            GrandExchange.collectAll();
+            Main.addHidePrice += Main.intervalAmnt;
+            Main.setPrices();
         }
         return 1000;
     }

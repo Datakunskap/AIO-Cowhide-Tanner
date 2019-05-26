@@ -28,15 +28,19 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     fill out values ->
 */
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
-    public static int COWHIDE = 1751;
+    public static int COWHIDE = 1753;
     // Switches to max profit hide after selling leathers
     public static boolean restockMaxProfitHide = true;
     // Needs to be restocking
     public static boolean calcMacProfitOnStart = true;
     // Increase buying GP per hide
-    private static int addHidePrice = 20;
+    public static int addHidePrice = 20;
     // Decrease selling GP per leather
-    private static int subLeatherPrice = 10;
+    public static int subLeatherPrice = 10;
+    // Time(min) to increase/decrease price
+    public static int resetGeTime = 10;
+    // Amount to increase/decrease each interval
+    public static int intervalAmnt = 2;
     public static final int muleAmnt = 5100000;
     public static final int muleKeep = 5000000;
 ////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +59,8 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static int gp = 0;
     public static int amntMuled = 0;
     public static boolean checkRestock = true;
+    public static long startTime = 0;
+    public static int elapsedSeconds = 0;
 
     public static int[] HIDES = {
             1753, // green dhide
@@ -91,6 +97,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
         // Switch to second highest if just tanned
         if (maxH == prevH) {
+            Log.info("Same Hide -> Getting Second Highest");
             int[] temp = new int[HIDES.length-1];
             int x = 0;
             for (int i=0; i<HIDES.length; i++){
@@ -166,7 +173,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static void setPrices() {
         {
             try {
-                Log.info("Setting prices");
+                //Log.info("Setting prices");
                 leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]) - subLeatherPrice;
                 cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + addHidePrice;
                 priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
@@ -311,5 +318,10 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         if (Main.COWHIDE == 1747) {
             Log.fine("Black Dragonhide");
         }
+    }
+
+    public static void checkTime(){
+        long currTime = System.currentTimeMillis();
+        elapsedSeconds = (int)((currTime - startTime) / 1000);
     }
 }
