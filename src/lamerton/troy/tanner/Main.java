@@ -28,15 +28,15 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     fill out values ->
 */
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
-    public static int COWHIDE = 1751;
+    public static int COWHIDE = 1747;
     // Switches to max profit hide after selling leathers
     public static boolean restockMaxProfitHide = true;
     // Needs to be restocking
     public static boolean calcMacProfitOnStart = true;
     // Increase buying GP per hide
-    public static int addHidePrice = 20;
+    public static int addHidePrice = 10;
     // Decrease selling GP per leather
-    public static int subLeatherPrice = 10;
+    public static int subLeatherPrice = 5;
     // Time(min) to increase/decrease price
     public static int resetGeTime = 10;
     // Amount to increase/decrease each interval

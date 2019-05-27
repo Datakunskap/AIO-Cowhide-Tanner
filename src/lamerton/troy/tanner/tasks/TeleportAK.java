@@ -35,7 +35,8 @@ public class TeleportAK extends Task {
     }
 
     private void dueling() {
-        if (!EquipmentSlot.RING.getItem().getName().equals("Ring of dueling") && EquipmentSlot.RING.interact("Duel Arena")) {
+        if (Equipment.contains(x -> x != null && x.getName().contains("dueling")) && !EquipmentSlot.RING.getItem().getName().equals("Ring of dueling") &&
+                EquipmentSlot.RING.interact("Duel Arena")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
             if (Rings.hasChargedRingD()) {
@@ -49,7 +50,8 @@ public class TeleportAK extends Task {
             for (Item item : Inventory.getItems()) {
                 if (item != null && item.getName().contains("dueling") && item.getName().matches(".*\\d+.*")) {
                     item.interact("Wear");
-                    if (Time.sleepUntil(() -> EquipmentSlot.RING.getItem().getId() == item.getId(), 2000)) {
+                    if (Time.sleepUntil(() -> EquipmentSlot.RING.getItem() != null &&
+                            EquipmentSlot.RING.getItem().getId() == item.getId(), 2000)) {
                         break;
                     }
                 }

@@ -94,6 +94,7 @@ public class SellGE extends Task {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                Main.calcMacProfitOnStart = false;
             }
         }
 

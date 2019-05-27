@@ -31,6 +31,16 @@ public class BuyGE extends Task {
 
     @Override
     public int execute() {
+        if (!Main.checkedBank) {
+            Banking.execute();
+            Main.checkedBank = true;
+        }
+        
+        if (Rings.hasChargedRingW())
+            Main.newRingW = false;
+        if (Rings.hasChargedRingD())
+            Main.newRingD = false;
+
         if (Main.newRingW) {
             buyRingW();
             Main.newRingW = false;
@@ -38,11 +48,6 @@ public class BuyGE extends Task {
         if (Main.newRingD) {
             buyRingD();
             Main.newRingD =false;
-        }
-
-        if (!Main.checkedBank) {
-            Banking.execute();
-            Main.checkedBank = true;
         }
 
         if(Main.gp < Main.cowhidePrice && GrandExchange.getOffers() == null && GrandExchangeSetup.getItem() == null) {

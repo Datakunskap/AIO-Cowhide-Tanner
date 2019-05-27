@@ -51,11 +51,11 @@ public class CheckRestock extends Task {
             Time.sleep(1000);
         }
         if (!hasW && Bank.contains(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"))) {
-            Main.newRingW = true;
+            Main.newRingW = false;
             hasW = true;
         }
         if (!hasD && Bank.contains(x -> x != null && x.getName().contains("dueling") && x.getName().matches(".*\\d+.*"))) {
-            Main.newRingD = true;
+            Main.newRingD = false;
             hasD = true;
         }
         if (!hasH && Bank.contains(Main.COWHIDE) || Bank.contains(Main.COWHIDE + 1)) {
@@ -66,10 +66,14 @@ public class CheckRestock extends Task {
             Time.sleep(1000);
             if (!hasH)
                 Main.printHide();
-            if (!hasW)
+            if (!hasW) {
                 Log.fine("Ring of wealth");
-            if (!hasD)
+                Main.newRingW = true;
+            }
+            if (!hasD) {
                 Log.fine("Ring of dueling");
+                Main.newRingD = true;
+            }
             Main.restock = true;
         } else {
             Main.restock = false;
