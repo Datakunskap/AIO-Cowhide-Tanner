@@ -17,6 +17,8 @@ import java.io.IOException;
 
 public class SellGE extends Task {
 
+    private boolean sellCheck = false;
+
     @Override
     public boolean validate() {
         return Main.restock && !Main.sold && Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling;
@@ -68,6 +70,7 @@ public class SellGE extends Task {
             Main.sold = true;
             Main.checkedBank = false;
             Main.geSet = false;
+            sellCheck = true;
             Log.info("Done selling");
 
             if (Main.restockMaxProfitHide) {
@@ -87,7 +90,7 @@ public class SellGE extends Task {
             Main.geSet = false;
             Log.info("Done selling 2");
 
-            if (Main.calcMacProfitOnStart && Main.restockMaxProfitHide) {
+            if (!sellCheck && Main.calcMacProfitOnStart && Main.restockMaxProfitHide) {
                 Log.fine("Calculating most profitable hide...");
                 try {
                     Main.setMaxProfitHide();
