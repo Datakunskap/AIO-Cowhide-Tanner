@@ -28,7 +28,7 @@ class Conditions {
 
     static boolean gotEnoughCoins() {
         Item coins = Inventory.getFirst("Coins");
-        return coins != null && coins.getStackSize() >= 27 * 20;
+        return coins != null && coins.getStackSize() >= 20;
     }
 
     static boolean nearTanner() {
