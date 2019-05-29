@@ -32,7 +32,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static int COWHIDE = 1753;
     // Switches to max profit hide after selling leathers
     public static boolean restockMaxProfitHide = true;
-    // Will calc max profit on restock
+    // Will calc max profit on restock/start
     public static boolean calcMacProfitOnStart = true;
     // Can tan the same hide twice in a row, Otherwise sets second most profitable
     public static boolean canTanSameHideTwice = true;
