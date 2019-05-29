@@ -40,6 +40,7 @@ public class TeleportGE extends Task {
                 EquipmentSlot.RING.interact("Grand exchange")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
+            Time.sleep(2000);
             if (Rings.hasChargedRingW()) {
                 Log.info("Ring has charge left");
                 Main.newRingW = false;

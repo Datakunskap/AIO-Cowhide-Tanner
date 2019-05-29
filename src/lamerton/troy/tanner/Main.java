@@ -4,6 +4,7 @@ import lamerton.troy.tanner.data.Location;
 import lamerton.troy.tanner.data.MuleArea;
 import lamerton.troy.tanner.tasks.*;
 import org.rspeer.runetek.api.commons.StopWatch;
+import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.event.listeners.RenderListener;
 import org.rspeer.runetek.event.types.RenderEvent;
@@ -23,27 +24,36 @@ import java.time.Duration;
         "F2P money making", category =
         ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ImageObserver {
-////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
 /*
     fill out values ->
 */
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
-    public static int COWHIDE = 1747;
+    public static int COWHIDE = 1753;
     // Switches to max profit hide after selling leathers
     public static boolean restockMaxProfitHide = true;
-    // Needs to be restocking
+    // Will calc max profit on restock
     public static boolean calcMacProfitOnStart = true;
+    // Can tan the same hide twice in a row, Otherwise sets second most profitable
+    public static boolean canTanSameHideTwice = true;
     // Increase buying GP per hide
     public static int addHidePrice = 10;
     // Decrease selling GP per leather
     public static int subLeatherPrice = 5;
     // Time(min) to increase/decrease price
-    public static int resetGeTime = 10;
+    public static int resetGeTime = 8;
     // Amount to increase/decrease each interval
-    public static int intervalAmnt = 2;
-    public static final int muleAmnt = 5100000;
+    public static int intervalAmnt = 3;
+    // Number of stamina potions to buy each restock
+    public static int numStamina = 3;
+    // Amount to mule at
+    public static final int muleAmnt = 5250000;
+    // Amount to keep from mule
     public static final int muleKeep = 5000000;
-////////////////////////////////////////////////////////////////////////////////////
+    // GE area to mule
+    public static MuleArea muleArea = MuleArea.GE_NW;
+
+    ////////////////////////////////////////////////////////////////////////////////////
 /*
     DO NOT CHANGE
 */
@@ -53,7 +63,6 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static Location location;
     public static boolean sold = false;
     public static boolean checkedBank = false;
-    public static MuleArea muleArea = MuleArea.GE_NW;
     public static boolean isMuling = false;
     public static boolean geSet = false;
     public static int gp = 0;
@@ -61,6 +70,12 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean checkRestock = true;
     public static long startTime = 0;
     public static int elapsedSeconds = 0;
+    public static long staminaPotionIntake = 0;
+    public static boolean buyPriceChng = false;
+    public static int decSellPrice = 0;
+    public static int incBuyPrice = 0;
+    public static long totalTransTime = 0;
+    public static int timesPriceChanged = 0;
 
     public static int[] HIDES = {
             1753, // green dhide
@@ -78,7 +93,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
             2505, // blue dhide leather
             2509, // black dhide leather
     };
-    public static int LEATHER_NOTE = LEATHERS[0]+1;
+    public static int LEATHER_NOTE = LEATHERS[0] + 1;
 
     public static void setMaxProfitHide() throws IOException {
         int maxH = COWHIDE;
@@ -86,33 +101,36 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         int maxP = leatherPrice - cowhidePrice;
 
         // Sets highest profit hide
-        for(int h : HIDES) {
+        for (int h : HIDES) {
             COWHIDE = h;
             setLeather();
             setPrices();
             if ((leatherPrice - cowhidePrice) > maxP) {
                 maxH = h;
+                maxP = leatherPrice - cowhidePrice;
             }
         }
 
         // Switch to second highest if just tanned
-        if (maxH == prevH) {
+        // Always switches if just tanned black
+        if ((maxH == prevH && !canTanSameHideTwice)) {
             Log.info("Same Hide -> Setting Second Highest");
-            int[] temp = new int[HIDES.length-1];
+            int[] temp = new int[HIDES.length - 1];
             int x = 0;
-            for (int i=0; i<HIDES.length; i++){
-                if(HIDES[i] != prevH){
+            for (int i = 0; i < HIDES.length; i++) {
+                if (HIDES[i] != prevH) {
                     temp[x] = HIDES[i];
                     x++;
                 }
             }
             maxP = 0;
-            for(int h : temp) {
+            for (int h : temp) {
                 COWHIDE = h;
                 setLeather();
                 setPrices();
                 if ((leatherPrice - cowhidePrice) > maxP) {
                     maxH = h;
+                    maxP = leatherPrice - cowhidePrice;
                 }
             }
         }
@@ -125,26 +143,50 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     public static void setLeather() {
         // Cow
-        if (Main.COWHIDE == 1739) {
+        if (COWHIDE == 1739) {
             LEATHERS[0] = 1741;
         }
         // Green
-        if (Main.COWHIDE == 1753) {
+        if (COWHIDE == 1753) {
             LEATHERS[0] = 1745;
         }
         // Blue
-        if (Main.COWHIDE == 1751) {
+        if (COWHIDE == 1751) {
             LEATHERS[0] = 2505;
         }
         // Red
-        if (Main.COWHIDE == 1749) {
+        if (COWHIDE == 1749) {
             LEATHERS[0] = 2507;
         }
         // Black
-        if (Main.COWHIDE == 1747) {
+        if (COWHIDE == 1747) {
             LEATHERS[0] = 2509;
         }
-        LEATHER_NOTE = LEATHERS[0]+1;
+        LEATHER_NOTE = LEATHERS[0] + 1;
+    }
+
+    public static void setHideFromLeather() {
+        // Cow
+        if (LEATHERS[0] == 1741) {
+            COWHIDE = 1739;
+        }
+        // Green
+        if (LEATHERS[0] == 1745) {
+            COWHIDE = 1753;
+        }
+        // Blue
+        if (LEATHERS[0] == 2505) {
+            COWHIDE = 1751;
+        }
+        // Red
+        if (LEATHERS[0] == 2507) {
+            COWHIDE = 1749;
+        }
+        // Black
+        if (LEATHERS[0] == 2509) {
+            COWHIDE = 1747;
+        }
+        LEATHER_NOTE = LEATHERS[0] + 1;
     }
 
     public static final Area TANNER_AREA = Area.rectangular(3271, 3191, 3277, 3193);
@@ -169,18 +211,34 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static int cowhidePrice;
     public static int priceRingW;
     public static int priceRingD;
+    public static int priceStamina;
 
     public static void setPrices() {
         {
-            try {
-                //Log.info("Setting prices");
-                leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]) - subLeatherPrice;
-                cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + addHidePrice;
-                priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
-                priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
-            } catch (IOException e) {
-                Log.severe("Failed getting price");
-                e.printStackTrace();
+            // Green or Cow set default
+            if (COWHIDE == 1753 || COWHIDE == 1739) {
+                try {
+                    //Log.info("Setting prices");
+                    leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
+                    cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE);
+                    priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
+                    priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
+                    priceStamina = ExPriceChecker.getOSBuddyPrice(12625);
+                } catch (IOException e) {
+                    Log.severe("Failed getting price");
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    //Log.info("Setting prices");
+                    leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]) - subLeatherPrice;
+                    cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + addHidePrice;
+                    priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
+                    priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
+                } catch (IOException e) {
+                    Log.severe("Failed getting price");
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -297,31 +355,46 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
         return randomNum;
     }
 
-    public static void printHide(){
+    public static void printHide() {
         // Cow
         if (Main.COWHIDE == 1739) {
             Log.fine("Cowhide");
         }
         // Green
         if (Main.COWHIDE == 1753) {
-            Log.fine("Green Dragonhide");
+            Log.fine("Green Dragonhide | Profit: " + (leatherPrice - cowhidePrice));
         }
         // Blue
         if (Main.COWHIDE == 1751) {
-            Log.fine("Blue Dragonhide");
+            Log.fine("Blue Dragonhide | Profit: " + (leatherPrice - cowhidePrice));
         }
         // Red
         if (Main.COWHIDE == 1749) {
-            Log.fine("Red Dragonhide");
+            Log.fine("Red Dragonhide | Profit: " + (leatherPrice - cowhidePrice));
         }
         // Black
         if (Main.COWHIDE == 1747) {
-            Log.fine("Black Dragonhide");
+            Log.fine("Black Dragonhide | Profit: " + (leatherPrice - cowhidePrice));
         }
     }
 
-    public static void checkTime(){
+    public static void checkTime() {
         long currTime = System.currentTimeMillis();
-        elapsedSeconds = (int)((currTime - startTime) / 1000);
+        elapsedSeconds = (int) ((currTime - startTime) / 1000);
+    }
+
+    public static final String[] staminaNames = {"Stamina potion(4)", "Stamina potion(3)", "Stamina potion(2)", "Stamina potion(1)"};
+
+    public static boolean shouldDrinkPotion() {
+        long staminaPotionDuration = System.currentTimeMillis() - Main.staminaPotionIntake;
+        return !Main.restock && !Main.isMuling && staminaPotionDuration > 120000 &&
+                Main.randInt(1, 2) == 1;
+    }
+
+    public static void drinkStaminaPotion() {
+        if (Inventory.contains(staminaNames) && Inventory.getFirst(staminaNames).interact("Drink")) {
+            Log.fine("Drinking Stamina potion");
+            Main.staminaPotionIntake = System.currentTimeMillis();
+        }
     }
 }

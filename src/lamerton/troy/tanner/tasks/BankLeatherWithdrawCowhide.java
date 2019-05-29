@@ -54,7 +54,7 @@ public class BankLeatherWithdrawCowhide extends Task {
                         Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
                         Time.sleep(3000);
                     }
-                    Log.fine("Restocking");
+                    // Log.fine("Restocking");
                     Bank.close();
 
                     Main.checkRestock = true;
@@ -74,6 +74,21 @@ public class BankLeatherWithdrawCowhide extends Task {
             final int cowhideBankAmount = cowhide == null ? 0 : cowhide.getStackSize();
 
             if (cowhideBankAmount >= 1) {
+                // Drink Stamina potion
+                if(Bank.contains(Main.staminaNames) && Main.shouldDrinkPotion()){
+                    Bank.withdraw(x -> x != null && x.getName().contains("Stamina") && x.getName().matches(".*\\d+.*"), 1);
+                    Time.sleepUntil(() -> Inventory.contains(Main.staminaNames), 5000);
+                    Bank.close();
+                    Time.sleepUntil(() -> Bank.isClosed(), 5000);
+                    Main.drinkStaminaPotion();
+                    Bank.open();
+                    Time.sleepUntil(() -> Bank.isOpen(), 5000);
+                    Bank.depositAll(Main.staminaNames);
+                    Time.sleepUntil(() -> !Inventory.contains(Main.staminaNames), 5000);
+                    if (!Bank.contains(Main.staminaNames))
+                        Main.numStamina++;
+                }
+
                 // bank has more cowhide, withdraw Cowhide
                 if (Bank.withdrawAll(Main.COWHIDE)) {
                     Time.sleepUntil(Conditions::gotCowhide, 2000);
@@ -94,7 +109,7 @@ public class BankLeatherWithdrawCowhide extends Task {
                     Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
                     Time.sleep(3000);
                 }
-                Log.fine("Restocking");
+               // Log.fine("Restocking");
                 Bank.close();
                 Main.restock = true;
                 Main.checkRestock = true;

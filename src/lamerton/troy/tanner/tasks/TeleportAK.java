@@ -39,6 +39,7 @@ public class TeleportAK extends Task {
                 EquipmentSlot.RING.interact("Duel Arena")) {
             Position current = Players.getLocal().getPosition();
             Time.sleepUntil(() -> !Players.getLocal().getPosition().equals(current), 2000);
+            Time.sleep(2000);
             if (Rings.hasChargedRingD()) {
                 Log.info("Ring has charge left");
                 Main.newRingD = false;

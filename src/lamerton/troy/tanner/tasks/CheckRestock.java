@@ -3,6 +3,7 @@ package lamerton.troy.tanner.tasks;
 import lamerton.troy.tanner.Main;
 import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
+import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
@@ -61,7 +62,11 @@ public class CheckRestock extends Task {
         if (!hasH && Bank.contains(Main.COWHIDE) || Bank.contains(Main.COWHIDE + 1)) {
             hasH = true;
         }
-        if (!hasH || !hasD || !hasW) {
+        if (!hasH && detectPrevHide()) {
+            hasH = true;
+        }
+
+        if (!hasH || !hasD || !hasW || !Conditions.gotEnoughCoins()) {
             Log.fine("Restocking: ->");
             Time.sleep(1000);
             if (!hasH)
@@ -74,12 +79,48 @@ public class CheckRestock extends Task {
                 Log.fine("Ring of dueling");
                 Main.newRingD = true;
             }
+            if (!Conditions.gotEnoughCoins())
+                Log.fine("Out of money -> Selling leathers");
+            if (Bank.isOpen() && BankLocation.getNearest() != null && BankLocation.getNearest().equals(BankLocation.AL_KHARID)) {
+                Log.info("Getting Ring of wealth");
+                Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
+                Time.sleep(3000);
+            }
+
             Main.restock = true;
         } else {
             Main.restock = false;
         }
         Main.checkRestock = false;
         return 1000;
+    }
+
+    private boolean detectPrevHide() {
+        // Auto-detect previous hide
+        boolean detectedH = false;
+
+        if (Bank.contains(2507) || Bank.contains(1745) || Bank.contains(1741) || Bank.contains(2505) || Bank.contains(2509)) {
+            Main.LEATHERS[0] = Bank.getFirst(x -> x != null && x.getName().contains("leather")).getId();
+            Main.setHideFromLeather();
+            detectedH = false;
+        }
+        if (Inventory.contains(2507) || Inventory.contains(1745) || Inventory.contains(1741) || Inventory.contains(2505) || Inventory.contains(2509)) {
+            Main.LEATHERS[0] = Inventory.getFirst(x -> x != null && x.getName().contains("leather")).getId();
+            Main.setHideFromLeather();
+            detectedH = false;
+        }
+        if (Bank.contains(1753) || Bank.contains(1749) || Bank.contains(1751) || Bank.contains(1747) || Bank.contains(1739)) {
+            Main.COWHIDE = Bank.getFirst(x -> x != null && x.getName().contains("hide")).getId();
+            detectedH = true;
+        }
+        if (Inventory.contains(1753) || Inventory.contains(1749) || Inventory.contains(1751) || Inventory.contains(1747) || Inventory.contains(1739)) {
+            Main.COWHIDE = Inventory.getFirst(x -> x != null && x.getName().contains("hide")).getId();
+            detectedH = true;
+        }
+
+        Main.setLeather();
+        Main.setPrices();
+        return detectedH;
     }
 
     private void closeGE() {
