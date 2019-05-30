@@ -20,7 +20,7 @@ class Conditions {
     }
 
     static boolean gotCowhide() {
-        return Inventory.contains(Main.COWHIDE);
+        return Inventory.contains(Main.COWHIDE) && !Inventory.contains(Main.COWHIDE+1);
     }
     static boolean gotHide() {
         return Inventory.contains(Main.HIDES);

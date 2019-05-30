@@ -1,6 +1,7 @@
 package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.Main;
+import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
@@ -33,18 +34,36 @@ public class Banking {//extends Task {
                 Main.gp -= tanningGp;
                 Main.gp -= (Main.numStamina * Main.priceStamina);
             }
+            if (Main.numStamina > 0)
+                Main.gp -= Main.priceStamina * Main.numStamina;
+            if (Main.newRingW)
+                Main.gp -= Main.priceRingW;
+            if (Main.newRingD)
+                Main.gp -= Main.priceRingD;
 
+            // Withdraw GP
             Time.sleep(500, 1500);
             Bank.withdrawAll(995);
-            Time.sleepUntil(() -> Inventory.contains(995), 5000);
-            Bank.withdraw(x -> x != null && x.getName().contains("Ring of dueling") && x.getName().matches(".*\\d+.*"), 1);
-            Time.sleepUntil(() -> Inventory.contains(x -> x != null && x.getName().contains("Ring of dueling") && x.getName().matches(".*\\d+.*")), 5000);
+            Time.sleepUntil(() -> !Bank.contains(995), 5000);
+
+            // Withdraw Ring of dueling
+            if (Bank.contains(x -> x != null && x.getName().contains("Ring of dueling") && x.getName().matches(".*\\d+.*"))) {
+                Bank.withdraw(x -> x != null && x.getName().contains("Ring of dueling") && x.getName().matches(".*\\d+.*"), 1);
+                Time.sleep(5000);
+            }
+
+            // Withdraw Ring of wealth
+            if (Bank.contains(x -> x != null && x.getName().contains("Ring of wealth") && x.getName().matches(".*\\d+.*"))) {
+                Bank.withdraw(x -> x != null && x.getName().contains("Ring of wealth") && x.getName().matches(".*\\d+.*"), 1);
+                Time.sleep(5000);
+            }
+
             // Withdraw leathers to sell
             if (Bank.contains(Main.LEATHERS[0])) {
                 Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);
                 Time.sleepUntil(() -> Bank.getWithdrawMode().equals(Bank.WithdrawMode.NOTE), 5000);
                 Bank.withdrawAll(Main.LEATHERS[0]);
-                Time.sleepUntil(() -> Inventory.contains(Main.LEATHERS[0]), 5000);
+                Time.sleepUntil(() -> !Bank.contains(Main.LEATHERS[0]), 5000);
             }
 
             // Withdraw leftover hides to sell
@@ -52,7 +71,7 @@ public class Banking {//extends Task {
                 Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);
                 Time.sleepUntil(() -> Bank.getWithdrawMode().equals(Bank.WithdrawMode.NOTE), 5000);
                 Bank.withdrawAll(Main.COWHIDE);
-                Time.sleepUntil(() -> Inventory.contains(Main.COWHIDE), 5000);
+                Time.sleepUntil(() -> !Bank.contains(Main.COWHIDE), 5000);
             }
         }
         Bank.close();

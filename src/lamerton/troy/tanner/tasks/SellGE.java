@@ -1,6 +1,7 @@
 package lamerton.troy.tanner.tasks;
 
 import lamerton.troy.tanner.Main;
+import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.GrandExchange;
@@ -30,8 +31,12 @@ public class SellGE extends Task {
         }
 
         if (!GrandExchange.isOpen()) {
-            Time.sleepUntil(() -> Npcs.getNearest(x -> x != null && x.getName().contains("Grand Exchange Clerk")).interact("Exchange"), 1000, 10000);
-            Time.sleep(700, 1300);
+            Log.fine("Selling");
+            Npc n = Npcs.getNearest(x -> x != null && x.getName().contains("Grand Exchange Clerk"));
+            if (n != null) {
+                Time.sleepUntil(() -> n == null || n.interact("Exchange"), 1000, 10000);
+                Time.sleep(700, 1300);
+            }
             return 1000;
         }
 
@@ -40,6 +45,7 @@ public class SellGE extends Task {
         }
 
         if (!sellRemainingHides()) {
+            GrandExchange.collectAll();
             return 1000;
         }
 
@@ -128,17 +134,18 @@ public class SellGE extends Task {
             Main.timesPriceChanged++;
         }
 
+        GrandExchange.collectAll();
         return 1000;
     }
 
     private boolean sellRemainingHides() {
         if (Inventory.contains(Main.COWHIDE+1)) {
-            Log.info("Selling Remaining Hides");
+            Log.fine("Selling Remaining Hides");
             GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL);
             Time.sleep(800);
-            GrandExchangeSetup.setItem(Main.COWHIDE+1);
+            GrandExchangeSetup.setItem(Main.COWHIDE + 1);
             Time.sleep(600);
-            GrandExchangeSetup.setPrice(Main.cowhidePrice - 20);
+            GrandExchangeSetup.setPrice(Main.cowhideSellPrice - 25);
             Time.sleep(600);
             GrandExchangeSetup.setQuantity(9999999);
             Time.sleep(600);
@@ -151,7 +158,7 @@ public class SellGE extends Task {
             Time.sleep(Random.mid(300, 600));
             Keyboard.pressEnter();
 
-            if (GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) && !Inventory.contains(Main.COWHIDE+1)) {
+            if (GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) && !Inventory.contains(Main.COWHIDE + 1)) {
                 GrandExchange.collectAll();
                 Time.sleep(Random.mid(300, 600));
                 GrandExchange.collectAll();
@@ -160,7 +167,12 @@ public class SellGE extends Task {
             } else {
                 return false;
             }
+        }
+
+        if (GrandExchange.getFirst(x -> x != null && x.getItemId() == Main.COWHIDE) != null) {
+            return false;
         } else {
+            GrandExchange.collectAll();
             return true;
         }
     }

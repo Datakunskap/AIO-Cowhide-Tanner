@@ -50,7 +50,7 @@ public class TanHide extends Task {
                 leatherComponent = Interfaces.getComponent(324, 131);
             }
 
-            if (leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
+            if (leatherComponent != null && leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
                 // wait for all cowhides to turn into leather
                 if (Time.sleepUntil(() -> !Conditions.gotCowhide(), 3000)) {
                     taskRunner.totalTanned += Inventory.getCount(taskRunner.LEATHERS[0]);

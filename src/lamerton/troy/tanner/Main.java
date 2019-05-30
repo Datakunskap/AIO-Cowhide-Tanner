@@ -4,9 +4,14 @@ import lamerton.troy.tanner.data.Location;
 import lamerton.troy.tanner.data.MuleArea;
 import lamerton.troy.tanner.tasks.*;
 import org.rspeer.runetek.api.commons.StopWatch;
+import org.rspeer.runetek.api.component.*;
+import org.rspeer.runetek.api.component.chatter.Chat;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.movement.position.Area;
+import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.listeners.RenderListener;
+import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.RenderEvent;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
@@ -23,7 +28,7 @@ import java.time.Duration;
 @ScriptMeta(name = "Ultimate Tanner", developer = "DrScatman", desc = "Tans hides " +
         "F2P money making", category =
         ScriptCategory.MONEY_MAKING, version = 0.01)
-public class Main extends TaskScript implements RenderListener, ImageObserver {
+public class Main extends TaskScript implements RenderListener, ImageObserver, ChatMessageListener {
     ////////////////////////////////////////////////////////////////////////////////////
 /*
     fill out values ->
@@ -41,17 +46,19 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     // Decrease selling GP per leather
     public static int subLeatherPrice = 5;
     // Time(min) to increase/decrease price
-    public static int resetGeTime = 8;
+    public static int resetGeTime = 5;
     // Amount to increase/decrease each interval
-    public static int intervalAmnt = 3;
+    public static int intervalAmnt = 5;
     // Number of stamina potions to buy each restock
-    public static int numStamina = 3;
+    public static int numStamina = 5;
+    // Will increase the number of potions you buy to what you needed last time
+    public static boolean smartPotions = false;
     // Amount to mule at
     public static final int muleAmnt = 5250000;
     // Amount to keep from mule
     public static final int muleKeep = 5000000;
     // GE area to mule
-    public static MuleArea muleArea = MuleArea.GE_NW;
+    public static MuleArea muleArea = MuleArea.GE_NE;
 
     ////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -74,7 +81,6 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     public static boolean buyPriceChng = false;
     public static int decSellPrice = 0;
     public static int incBuyPrice = 0;
-    public static long totalTransTime = 0;
     public static int timesPriceChanged = 0;
 
     public static int[] HIDES = {
@@ -209,6 +215,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
 
     public static int leatherPrice;
     public static int cowhidePrice;
+    public static int cowhideSellPrice;
     public static int priceRingW;
     public static int priceRingD;
     public static int priceStamina;
@@ -219,11 +226,12 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
             if (COWHIDE == 1753 || COWHIDE == 1739) {
                 try {
                     //Log.info("Setting prices");
-                    leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]);
-                    cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE);
-                    priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
-                    priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
-                    priceStamina = ExPriceChecker.getOSBuddyPrice(12625);
+                    leatherPrice = ExPriceChecker.getOSBuddySellPrice(Main.LEATHERS[0]);
+                    cowhidePrice = ExPriceChecker.getOSBuddyBuyPrice(Main.COWHIDE);
+                    cowhideSellPrice = ExPriceChecker.getOSBuddySellPrice(Main.COWHIDE);
+                    priceRingW = ExPriceChecker.getOSBuddyBuyPrice(11980) + 500;
+                    priceRingD = ExPriceChecker.getOSBuddyBuyPrice(2552) + 500;
+                    priceStamina = ExPriceChecker.getOSBuddyBuyPrice(12625) + 50;
                 } catch (IOException e) {
                     Log.severe("Failed getting price");
                     e.printStackTrace();
@@ -231,10 +239,12 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
             } else {
                 try {
                     //Log.info("Setting prices");
-                    leatherPrice = ExPriceChecker.getOSBuddyPrice(Main.LEATHERS[0]) - subLeatherPrice;
-                    cowhidePrice = ExPriceChecker.getOSBuddyPrice(Main.COWHIDE) + addHidePrice;
-                    priceRingW = ExPriceChecker.getOSBuddyPrice(11980);
-                    priceRingD = ExPriceChecker.getOSBuddyPrice(2552);
+                    leatherPrice = ExPriceChecker.getOSBuddySellPrice(Main.LEATHERS[0]) - subLeatherPrice;
+                    cowhidePrice = ExPriceChecker.getOSBuddyBuyPrice(Main.COWHIDE) + addHidePrice;
+                    cowhideSellPrice = ExPriceChecker.getOSBuddySellPrice(Main.COWHIDE);
+                    priceRingW = ExPriceChecker.getOSBuddyBuyPrice(11980) + 500;
+                    priceRingD = ExPriceChecker.getOSBuddyBuyPrice(2552) + 500;
+                    priceStamina = ExPriceChecker.getOSBuddyBuyPrice(12625) + 50;
                 } catch (IOException e) {
                     Log.severe("Failed getting price");
                     e.printStackTrace();
@@ -384,17 +394,27 @@ public class Main extends TaskScript implements RenderListener, ImageObserver {
     }
 
     public static final String[] staminaNames = {"Stamina potion(4)", "Stamina potion(3)", "Stamina potion(2)", "Stamina potion(1)"};
+    public static long randStamPotionTime = randInt(120000, 360000);
 
     public static boolean shouldDrinkPotion() {
         long staminaPotionDuration = System.currentTimeMillis() - Main.staminaPotionIntake;
-        return !Main.restock && !Main.isMuling && staminaPotionDuration > 120000 &&
-                Main.randInt(1, 2) == 1;
+        return !Main.restock && !Main.isMuling && staminaPotionDuration > randStamPotionTime;
     }
 
     public static void drinkStaminaPotion() {
         if (Inventory.contains(staminaNames) && Inventory.getFirst(staminaNames).interact("Drink")) {
             Log.fine("Drinking Stamina potion");
             Main.staminaPotionIntake = System.currentTimeMillis();
+            randStamPotionTime = randInt(120000, 360000);
+        }
+    }
+
+    @Override
+    public void notify(ChatMessageEvent msg) {
+        if (msg.getMessage().contains("bot") || msg.getMessage().contains("Bot") && !isMuling && !Bank.isOpen() &&
+                !GrandExchange.isOpen() && GrandExchangeSetup.isOpen() && Interfaces.getComponent(324, 124) == null) {
+            Chat.send("Of course not");
+            Keyboard.pressEnter();
         }
     }
 }

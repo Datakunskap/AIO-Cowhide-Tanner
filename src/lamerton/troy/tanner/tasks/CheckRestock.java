@@ -3,6 +3,7 @@ package lamerton.troy.tanner.tasks;
 import lamerton.troy.tanner.Main;
 import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
+import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
@@ -11,6 +12,7 @@ import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.input.menu.ActionOpcodes;
+import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
@@ -62,7 +64,7 @@ public class CheckRestock extends Task {
         if (!hasH && Bank.contains(Main.COWHIDE) || Bank.contains(Main.COWHIDE + 1)) {
             hasH = true;
         }
-        if (!hasH && detectPrevHide()) {
+        if (detectPrevHide() && !hasH) {
             hasH = true;
         }
 
@@ -81,14 +83,28 @@ public class CheckRestock extends Task {
             }
             if (!Conditions.gotEnoughCoins())
                 Log.fine("Out of money -> Selling leathers");
+
             if (Bank.isOpen() && BankLocation.getNearest() != null && BankLocation.getNearest().equals(BankLocation.AL_KHARID)) {
                 Log.info("Getting Ring of wealth");
                 Bank.withdraw(x -> x != null && x.getName().contains("wealth") && x.getName().matches(".*\\d+.*"), 1);
-                Time.sleep(3000);
+                Time.sleep(5000);
             }
 
             Main.restock = true;
         } else {
+            Log.fine("Restock not necessary");
+
+            Bank.depositAllExcept(995, 11980, 11982, 11982, 11986, 11988);
+            Time.sleep(5000);
+            /*if (Inventory.contains(Main.COWHIDE+1)) {
+                Bank.depositAll(Main.COWHIDE+1);
+                Time.sleep(5000);
+            }*/
+            if (Bank.isOpen() && BankLocation.getNearest() != null && BankLocation.getNearest().equals(BankLocation.GRAND_EXCHANGE)) {
+                Log.info("Getting Ring of dueling");
+                Bank.withdraw(x -> x != null && x.getName().contains("dueling") && x.getName().matches(".*\\d+.*"), 1);
+                Time.sleep(5000);
+            }
             Main.restock = false;
         }
         Main.checkRestock = false;
@@ -99,6 +115,7 @@ public class CheckRestock extends Task {
         // Auto-detect previous hide
         boolean detectedH = false;
 
+        // Detect leather
         if (Bank.contains(2507) || Bank.contains(1745) || Bank.contains(1741) || Bank.contains(2505) || Bank.contains(2509)) {
             Main.LEATHERS[0] = Bank.getFirst(x -> x != null && x.getName().contains("leather")).getId();
             Main.setHideFromLeather();
@@ -109,6 +126,15 @@ public class CheckRestock extends Task {
             Main.setHideFromLeather();
             detectedH = false;
         }
+        for(Item i : Bank.getInventory(x -> x != null && x.getName().contains("leather"))){
+            if (i != null) {
+                Main.LEATHERS[0] = i.getId();
+                Main.setHideFromLeather();
+                detectedH = false;
+            }
+        }
+
+        // Detect hide
         if (Bank.contains(1753) || Bank.contains(1749) || Bank.contains(1751) || Bank.contains(1747) || Bank.contains(1739)) {
             Main.COWHIDE = Bank.getFirst(x -> x != null && x.getName().contains("hide")).getId();
             detectedH = true;
@@ -116,6 +142,12 @@ public class CheckRestock extends Task {
         if (Inventory.contains(1753) || Inventory.contains(1749) || Inventory.contains(1751) || Inventory.contains(1747) || Inventory.contains(1739)) {
             Main.COWHIDE = Inventory.getFirst(x -> x != null && x.getName().contains("hide")).getId();
             detectedH = true;
+        }
+        for(Item i : Bank.getInventory(x -> x != null && x.getName().contains("hide"))){
+            if (i != null) {
+                Main.COWHIDE = i.getId();
+                detectedH = true;
+            }
         }
 
         Main.setLeather();

@@ -67,7 +67,7 @@ public class ExPriceChecker {
      * @param id The id of the item.
      * @return The price of the item; 0 otherwise.
      */
-    public static int getOSBuddyPrice(int id) throws IOException {
+    public static int getOSBuddySellPrice(int id) throws IOException {
         if (OSBUDDY_SUMMARY_JSON == null)
             setOSBuddySummaryJson();
 
@@ -76,5 +76,16 @@ public class ExPriceChecker {
             return 0;
 
         return json_objects.get("sell_average").getAsInt();
+    }
+
+    public static int getOSBuddyBuyPrice(int id) throws IOException {
+        if (OSBUDDY_SUMMARY_JSON == null)
+            setOSBuddySummaryJson();
+
+        final JsonObject json_objects = OSBUDDY_SUMMARY_JSON.getAsJsonObject(Integer.toString(id));
+        if (json_objects == null)
+            return 0;
+
+        return json_objects.get("buy_average").getAsInt();
     }
 }

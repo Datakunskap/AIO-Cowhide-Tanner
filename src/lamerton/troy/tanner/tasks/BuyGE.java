@@ -4,6 +4,7 @@ import lamerton.troy.tanner.ExGrandExchange;
 import lamerton.troy.tanner.Main;
 import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
+import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
@@ -43,8 +44,11 @@ public class BuyGE extends Task {
         }
 
         if (!GrandExchange.isOpen()) {
-            Time.sleepUntil(() -> Npcs.getNearest(x -> x != null && x.getName().contains("Grand Exchange Clerk")).interact("Exchange"), 1000, 10000);
-            Time.sleep(700, 1300);
+            Npc n = Npcs.getNearest(x -> x != null && x.getName().contains("Grand Exchange Clerk"));
+            if (n != null) {
+                Time.sleepUntil(() -> n == null || n.interact("Exchange"), 1000, 10000);
+                Time.sleep(700, 1300);
+            }
             return 1000;
         }
 
@@ -73,21 +77,8 @@ public class BuyGE extends Task {
             buyQuantity = 2300;
         }
 
-        if (Main.buyPriceChng && (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)))
-            buyQuantity -= (Inventory.getCount(true, x -> x != null && x.getId() == Main.COWHIDE) + Inventory.getCount(true, x -> x != null && x.getId() == Main.COWHIDE+1));
-        if (GrandExchange.getFirstActive() == null && ExGrandExchange.buy(Main.COWHIDE, buyQuantity, (Main.cowhidePrice + Main.incBuyPrice), false)) {
-            Log.fine("Buying Hides");
-        } else {
-            Log.info("Waiting to complete  |  Time: " + Main.elapsedSeconds / 60 + "min(s)  |  Price changed " + Main.timesPriceChanged + " time(s)");
-            if (!GrandExchange.isOpen()) {
-                Npcs.getNearest("Grand Exchange Clerk").interact("Exchange");
-                Time.sleep(Main.randInt(700, 1300));
-            }
-            Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED), 2000, 10000);
-            GrandExchange.collectAll();
-            Time.sleep(1500);
-        }
 
+        // Checks if done buying
         if (GrandExchange.getFirstActive() == null && !Main.newRingW && !Main.newRingD &&
                 (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1))) {
             if (Time.sleepUntil(() -> (Inventory.getCount(true, Main.COWHIDE) +
@@ -101,12 +92,32 @@ public class BuyGE extends Task {
                 Main.buyPriceChng = false;
                 Main.incBuyPrice = 0;
                 Main.timesPriceChanged = 0;
+                return 2000;
             }
         }
 
+        // Lowers quantity if some sold before price change
+        if (Main.buyPriceChng && (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE+1)))
+            buyQuantity -= (Inventory.getCount(true, x -> x != null && x.getId() == Main.COWHIDE) + Inventory.getCount(true, x -> x != null && x.getId() == Main.COWHIDE+1));
+
+        // Buys hides
+        if (GrandExchange.getFirstActive() == null && ExGrandExchange.buy(Main.COWHIDE, buyQuantity, (Main.cowhidePrice + Main.incBuyPrice), false)) {
+            Log.fine("Buying Hides");
+        } else {
+            Log.info("Waiting to complete  |  Time: " + Main.elapsedSeconds / 60 + "min(s)  |  Price changed " + Main.timesPriceChanged + " time(s)");
+            if (!GrandExchange.isOpen()) {
+                Npcs.getNearest("Grand Exchange Clerk").interact("Exchange");
+                Time.sleep(Main.randInt(700, 1300));
+            }
+            Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED), 2000, 10000);
+            GrandExchange.collectAll();
+            Time.sleep(1500);
+        }
+
+        // Increases buy price if over time
         Main.checkTime();
-        if(Main.elapsedSeconds > Main.resetGeTime * 60 &&
-                GrandExchange.getFirstActive() != null) {
+        if(Main.elapsedSeconds > Main.resetGeTime * 60 && !Main.newRingW && !Main.newRingD &&
+                (Main.numStamina < 1 || hasStaminaPotions()) && GrandExchange.getFirstActive() != null) {
             Log.fine("Increasing hide price by: " + Main.intervalAmnt);
             while(GrandExchange.getFirstActive() != null) {
                 Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).abort(), 1000, 5000);
@@ -133,7 +144,7 @@ public class BuyGE extends Task {
 
     private void buyRingW(){
         Log.fine("Buying Ring Of Wealth");
-        if (ExGrandExchange.buy(11980, 1, Main.priceRingW+500, false)) {
+        if (ExGrandExchange.buy(11980, 1, Main.priceRingW, false)) {
             Time.sleep(600);
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
@@ -159,7 +170,7 @@ public class BuyGE extends Task {
 
     private void buyRingD(){
         Log.fine("Buying Ring Of Dueling");
-        if (ExGrandExchange.buy(2552, 1, Main.priceRingD+500, false)) {
+        if (ExGrandExchange.buy(2552, 1, Main.priceRingD, false)) {
             Time.sleep(600);
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
@@ -185,7 +196,7 @@ public class BuyGE extends Task {
     }
 
     private void buyStamina() {
-        if (ExGrandExchange.buy(12625, Main.numStamina, Main.priceStamina+20, false)) {
+        if (ExGrandExchange.buy(12625, Main.numStamina, Main.priceStamina, false)) {
             Time.sleep(600);
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));

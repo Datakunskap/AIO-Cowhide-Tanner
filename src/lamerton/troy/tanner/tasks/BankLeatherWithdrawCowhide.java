@@ -85,7 +85,7 @@ public class BankLeatherWithdrawCowhide extends Task {
                     Time.sleepUntil(() -> Bank.isOpen(), 5000);
                     Bank.depositAll(Main.staminaNames);
                     Time.sleepUntil(() -> !Inventory.contains(Main.staminaNames), 5000);
-                    if (!Bank.contains(Main.staminaNames))
+                    if (!Bank.contains(Main.staminaNames) && Main.numStamina > 0 && Main.smartPotions)
                         Main.numStamina++;
                 }
 
