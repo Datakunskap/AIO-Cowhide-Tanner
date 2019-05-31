@@ -125,7 +125,8 @@ public class SellGE extends Task {
             Log.fine("Decreasing leather price by: " + Main.intervalAmnt);
             while(!Inventory.contains(Main.LEATHERS[0]) && GrandExchange.getFirstActive() != null) {
                 Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).abort(), 1000, 5000);
-                Time.sleep(3000);
+                GrandExchange.collectAll();
+                Time.sleep(5000);
                 GrandExchange.collectAll();
             }
             Main.decSellPrice += Main.intervalAmnt;
@@ -135,6 +136,7 @@ public class SellGE extends Task {
         }
 
         GrandExchange.collectAll();
+        Keyboard.pressEnter();
         return 1000;
     }
 

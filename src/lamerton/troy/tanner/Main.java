@@ -40,7 +40,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver, C
     // Will calc max profit on restock/start
     public static boolean calcMacProfitOnStart = true;
     // Can tan the same hide twice in a row, Otherwise sets second most profitable
-    public static boolean canTanSameHideTwice = true;
+    public static boolean canTanSameHideTwice = false;
     // Increase buying GP per hide
     public static int addHidePrice = 10;
     // Decrease selling GP per leather
@@ -48,9 +48,9 @@ public class Main extends TaskScript implements RenderListener, ImageObserver, C
     // Time(min) to increase/decrease price
     public static int resetGeTime = 5;
     // Amount to increase/decrease each interval
-    public static int intervalAmnt = 5;
+    public static int intervalAmnt = 8;
     // Number of stamina potions to buy each restock
-    public static int numStamina = 5;
+    public static int numStamina = 0;
     // Will increase the number of potions you buy to what you needed last time
     public static boolean smartPotions = false;
     // Amount to mule at

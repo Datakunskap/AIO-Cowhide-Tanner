@@ -5,6 +5,7 @@ import lamerton.troy.tanner.Main;
 import lamerton.troy.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.scene.Npc;
+import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
@@ -13,6 +14,7 @@ import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Equipment;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.input.menu.ActionOpcodes;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
@@ -111,6 +113,7 @@ public class BuyGE extends Task {
             }
             Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED), 2000, 10000);
             GrandExchange.collectAll();
+            Keyboard.pressEnter();
             Time.sleep(1500);
         }
 
@@ -121,7 +124,8 @@ public class BuyGE extends Task {
             Log.fine("Increasing hide price by: " + Main.intervalAmnt);
             while(GrandExchange.getFirstActive() != null) {
                 Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).abort(), 1000, 5000);
-                Time.sleep(3000);
+                GrandExchange.collectAll();
+                Time.sleep(5000);
                 GrandExchange.collectAll();
             }
             Main.incBuyPrice += Main.intervalAmnt;
