@@ -31,9 +31,7 @@ import java.time.Duration;
         ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener, ChatMessageListener {
     ////////////////////////////////////////////////////////////////////////////////////
-/*
-    fill out values ->
-*/
+
     // 1753 green, 1749 red, 1751 blue, 1747 black, 1739 cow
     public static int COWHIDE = 1753;
     // Switches to max profit hide after selling leathers
@@ -69,6 +67,9 @@ public class Main extends TaskScript implements RenderListener, ChatMessageListe
 /*
     DO NOT CHANGE
 */
+    // 2 hour Runtime limit
+    private final long TIME_LIMIT_SECONDS = 7200;
+
     public static boolean restock = true;
     public static boolean newRingW = false;
     public static boolean newRingD = false;
@@ -285,6 +286,13 @@ public class Main extends TaskScript implements RenderListener, ChatMessageListe
         return (int) tannedPerHour;
     }
 
+    private void limiter() {
+        final Duration durationRunning = this.timeRan == null ? Duration.ofSeconds(0) : this.timeRan.getElapsed();
+        if (durationRunning.getSeconds() > TIME_LIMIT_SECONDS) {
+            setStopping(true);
+        }
+    }
+
     private void logStats() {
         int[] stats = this.getStats();
         String statsString = "Tanned: "
@@ -298,6 +306,8 @@ public class Main extends TaskScript implements RenderListener, ChatMessageListe
 
     @Override
     public void notify(RenderEvent renderEvent) {
+        limiter();
+
         Graphics g = renderEvent.getSource();
 
         // render time running
