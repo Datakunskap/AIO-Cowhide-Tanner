@@ -1,10 +1,9 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
-import lamerton.troy.tanner.data.Rings;
+import script.java.tanner.Main;
+import script.java.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
-import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.Equipment;
 import org.rspeer.runetek.api.component.tab.EquipmentSlot;
 import org.rspeer.runetek.api.component.tab.Inventory;
@@ -17,7 +16,7 @@ public class TeleportGE extends Task {
 
     @Override
     public boolean validate() {
-        return Main.restock && !Main.location.getGEArea().contains(Players.getLocal()) &&
+        return Main.willBuyW && Main.restock && !Main.location.getGEArea().contains(Players.getLocal()) &&
                 !Main.isMuling && hasRing() && !Main.newRingW && Inventory.getCount(true, 995) != Main.muleKeep;
     }
 

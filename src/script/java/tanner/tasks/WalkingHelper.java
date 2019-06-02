@@ -1,4 +1,4 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;

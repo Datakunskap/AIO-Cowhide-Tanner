@@ -1,4 +1,4 @@
-package lamerton.troy.tanner.data;
+package script.java.tanner.data;
 
 import org.rspeer.runetek.api.component.tab.Equipment;
 import org.rspeer.runetek.api.component.tab.Inventory;

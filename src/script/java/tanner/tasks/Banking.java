@@ -1,7 +1,6 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
-import lamerton.troy.tanner.data.Rings;
+import script.java.tanner.Main;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
@@ -32,7 +31,9 @@ public class Banking {//extends Task {
             if (Main.COWHIDE != 1739) {
                 int tanningGp = (Main.gp / Main.cowhidePrice) * 20;
                 Main.gp -= tanningGp;
-                Main.gp -= (Main.numStamina * Main.priceStamina);
+            } else {
+                int tanningGp = (Main.gp / Main.cowhidePrice) * 3;
+                Main.gp -= tanningGp;
             }
             if (Main.numStamina > 0)
                 Main.gp -= Main.priceStamina * Main.numStamina;

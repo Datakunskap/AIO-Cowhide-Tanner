@@ -1,7 +1,7 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
-import lamerton.troy.tanner.data.Rings;
+import script.java.tanner.Main;
+import script.java.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.BankLocation;
@@ -12,7 +12,6 @@ import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.input.menu.ActionOpcodes;
-import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
@@ -67,6 +66,12 @@ public class CheckRestock extends Task {
         if (detectPrevHide() && !hasH) {
             hasH = true;
         }
+        if (!Main.willBuyD){
+            hasD = true;
+        }
+        if (!Main.willBuyW) {
+            hasW = true;
+        }
 
         if (!hasH || !hasD || !hasW || !Conditions.gotEnoughCoins()) {
             Log.fine("Restocking: ->");
@@ -112,17 +117,21 @@ public class CheckRestock extends Task {
     }
 
     private boolean detectPrevHide() {
+        Log.info("Detecting hide");
+
         // Auto-detect previous hide
         boolean detectedH = false;
 
         // Detect leather
         if (Bank.contains(2507) || Bank.contains(1745) || Bank.contains(1741) || Bank.contains(2505) || Bank.contains(2509)) {
-            Main.LEATHERS[0] = Bank.getFirst(x -> x != null && x.getName().contains("leather")).getId();
+            Main.LEATHERS[0] = Bank.getFirst(x -> x != null && (x.getName().contains("leather")) ||
+                    x.getName().contains("Leather")).getId();
             Main.setHideFromLeather();
             detectedH = false;
         }
         if (Inventory.contains(2507) || Inventory.contains(1745) || Inventory.contains(1741) || Inventory.contains(2505) || Inventory.contains(2509)) {
-            Main.LEATHERS[0] = Inventory.getFirst(x -> x != null && x.getName().contains("leather")).getId();
+            Main.LEATHERS[0] = Inventory.getFirst(x -> x != null && x.getName().contains("leather") ||
+                    x.getName().contains("Leather")).getId();
             Main.setHideFromLeather();
             detectedH = false;
         }

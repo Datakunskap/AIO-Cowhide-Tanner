@@ -1,6 +1,6 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
+import script.java.tanner.Main;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
@@ -8,8 +8,6 @@ import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
-
-import java.io.IOException;
 
 public class BankLeatherWithdrawCowhide extends Task {
 

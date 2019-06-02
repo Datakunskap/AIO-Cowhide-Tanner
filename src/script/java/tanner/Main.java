@@ -1,8 +1,8 @@
-package lamerton.troy.tanner;
+package script.java.tanner;
 
-import lamerton.troy.tanner.data.Location;
-import lamerton.troy.tanner.data.MuleArea;
-import lamerton.troy.tanner.tasks.*;
+import script.java.tanner.data.Location;
+import script.java.tanner.data.MuleArea;
+import script.java.tanner.tasks.*;
 import org.rspeer.runetek.api.commons.StopWatch;
 import org.rspeer.runetek.api.component.*;
 import org.rspeer.runetek.api.component.chatter.Chat;
@@ -18,6 +18,7 @@ import org.rspeer.script.ScriptMeta;
 import org.rspeer.script.task.TaskScript;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
+import script.java.tanner.ui.Gui;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
@@ -25,10 +26,10 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "Ultimate Tanner", developer = "DrScatman", desc = "Tans hides " +
+@ScriptMeta(name = "Ultimate AIO Tanner", developer = "DrScatman", desc = "Tans hides for $" +
         "F2P money making", category =
         ScriptCategory.MONEY_MAKING, version = 0.01)
-public class Main extends TaskScript implements RenderListener, ImageObserver, ChatMessageListener {
+public class Main extends TaskScript implements RenderListener, ChatMessageListener {
     ////////////////////////////////////////////////////////////////////////////////////
 /*
     fill out values ->
@@ -54,11 +55,15 @@ public class Main extends TaskScript implements RenderListener, ImageObserver, C
     // Will increase the number of potions you buy to what you needed last time
     public static boolean smartPotions = false;
     // Amount to mule at
-    public static final int muleAmnt = 5250000;
+    public static int muleAmnt = 5250000;
     // Amount to keep from mule
-    public static final int muleKeep = 5000000;
+    public static int muleKeep = 5000000;
     // GE area to mule
     public static MuleArea muleArea = MuleArea.GE_NE;
+    // Buy Ring of wealth
+    public static boolean willBuyW = true;
+    // Buy Ring of dueling
+    public static boolean willBuyD = true;
 
     ////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -253,7 +258,7 @@ public class Main extends TaskScript implements RenderListener, ImageObserver, C
         }
     }
 
-    StopWatch timeRan = null; // stopwatch is started by GUI
+    public StopWatch timeRan = null; // stopwatch is started by GUI
 
     @Override
     public void onStart() {
@@ -262,11 +267,11 @@ public class Main extends TaskScript implements RenderListener, ImageObserver, C
         setPrices();
 
         javax.swing.SwingUtilities.invokeLater(() -> {
-            new SimpleTannerGUI(this);
+            new Gui(this);
         });
 
         submit(TASKS);
-        //this.setPaused(true);
+        this.setPaused(true);
     }
 
     @Override
@@ -289,34 +294,33 @@ public class Main extends TaskScript implements RenderListener, ImageObserver, C
         Log.info(statsString);
     }
 
-    // painting
-    private static final Font runescapeFont = FetchHelper.getRunescapeFont();
-    private static final Font runescapeFontSmall = runescapeFont.deriveFont(runescapeFont.getSize2D() + 2f);
-    private static final Font runescapeFontBigger = runescapeFont.deriveFont(runescapeFont.getSize2D() + 5f);
     private static final DecimalFormat formatNumber = new DecimalFormat("#,###");
-    private static final String imageUrl = "https://i.imgur.com/1qEl73a.png";
-    private static final Image image1 = FetchHelper.getImage(imageUrl);
-
-    @Override
-    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-        return false;
-    }
 
     @Override
     public void notify(RenderEvent renderEvent) {
         Graphics g = renderEvent.getSource();
 
-        // render the paint layout
-        g.drawImage(Main.image1, 0, 0, this);
-
         // render time running
-        g.setFont(runescapeFontSmall);
+        g.setFont(new Font("TimesRoman", Font.BOLD, 20));
+
+        Color color = Color.WHITE;
+        if (COWHIDE == 1739)
+            color = Color.YELLOW.darker();
+        if (COWHIDE == 1753)
+            color = Color.GREEN.darker();
+        if (COWHIDE == 1751)
+            color = Color.BLUE.darker();
+        if (COWHIDE == 1749)
+            color = Color.RED.darker();
+        if (COWHIDE == 1747)
+            color = Color.BLACK.darker();
+
         this.drawStringWithShadow(
                 g,
                 this.timeRan == null ? "00:00:00" : this.timeRan.toElapsedString(),
                 242,
                 21,
-                Color.YELLOW.darker()
+                color
         );
 
 
@@ -326,13 +330,13 @@ public class Main extends TaskScript implements RenderListener, ImageObserver, C
         int totalProfit = stats[1];
         int hourlyProfit = stats[2];
 
-        g.setFont(runescapeFontBigger);
+        g.setFont(new Font("TimesRoman", Font.BOLD, 15));
 
         int adjustY = -5;
 
-        this.drawStringWithShadow(g, formatNumber.format(totalCowhideTanned), 68, 229 + adjustY, Color.YELLOW);
-        this.drawStringWithShadow(g, formatNumber.format(totalProfit), 68, 274 + adjustY, Color.WHITE);
-        this.drawStringWithShadow(g, formatNumber.format(hourlyProfit), 68, 319 + adjustY, Color.WHITE);
+        this.drawStringWithShadow(g, "Total Tanned: " + formatNumber.format(totalCowhideTanned), 8, 269 + adjustY, Color.WHITE);
+        this.drawStringWithShadow(g, "Total Profit: " + formatNumber.format(totalProfit), 8, 294 + adjustY, Color.WHITE);
+        this.drawStringWithShadow(g, "Profit/Hr: " + formatNumber.format(hourlyProfit), 8, 319 + adjustY, Color.WHITE);
     }
 
     private void drawStringWithShadow(Graphics g, String str, int x, int y, Color color) {

@@ -1,29 +1,28 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
-import org.rspeer.runetek.api.commons.BankLocation;
+import script.java.tanner.Main;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.script.task.Task;
 
-public class WalkToBank extends Task {
+public class WalkToTanner extends Task {
+
     @Override
     public boolean validate() {
-        // True if player is far away from the bank
-        return (!Conditions.atBank() && (!Conditions.gotCowhide() || !Conditions.gotEnoughCoins())) &&
+        // True if player is far away from the tanner
+        return (!Conditions.nearTanner() && Conditions.gotCowhide() && Conditions.gotEnoughCoins()) &&
                 !Main.restock && !Main.isMuling;
     }
 
     @Override
     public int execute() {
-        // walk to Al Kharid bank
         if (WalkingHelper.shouldEnableRun()) {
             WalkingHelper.enableRun();
         }
         if (WalkingHelper.shouldSetDestination()) {
-            if (Movement.walkToRandomized(BankLocation.AL_KHARID.getPosition())) {
-                Time.sleepUntil(Conditions::atBank, Random.mid(1800, 2400));
+            if (Movement.walkToRandomized(Main.TANNER_AREA.getCenter())) {
+                Time.sleepUntil(Conditions::nearTanner, Random.mid(1800, 2400));
             }
         }
         return 600;

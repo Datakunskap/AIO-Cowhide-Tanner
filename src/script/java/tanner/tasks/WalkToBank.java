@@ -1,31 +1,29 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
+import script.java.tanner.Main;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.movement.Movement;
-import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.script.task.Task;
-import org.rspeer.ui.Log;
 
-public class WalkToGE extends Task {
-
+public class WalkToBank extends Task {
     @Override
     public boolean validate() {
-        return !Main.location.getGEArea().contains(Players.getLocal()) && Main.restock && !Main.isMuling;
+        // True if player is far away from the bank
+        return (!Conditions.atBank() && (!Conditions.gotCowhide() || !Conditions.gotEnoughCoins())) &&
+                !Main.restock && !Main.isMuling;
     }
 
     @Override
     public int execute() {
+        // walk to Al Kharid bank
         if (WalkingHelper.shouldEnableRun()) {
             WalkingHelper.enableRun();
         }
-
-        Log.info("Walking to GE");
         if (WalkingHelper.shouldSetDestination()) {
-            if (Movement.walkToRandomized(BankLocation.GRAND_EXCHANGE.getPosition())) {
-                Time.sleepUntil(Conditions::atGE, Random.mid(1800, 2400));
+            if (Movement.walkToRandomized(BankLocation.AL_KHARID.getPosition())) {
+                Time.sleepUntil(Conditions::atBank, Random.mid(1800, 2400));
             }
         }
         return 600;

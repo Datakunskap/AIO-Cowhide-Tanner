@@ -1,6 +1,6 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
+import script.java.tanner.Main;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.Time;

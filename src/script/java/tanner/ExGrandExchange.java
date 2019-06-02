@@ -1,4 +1,4 @@
-package lamerton.troy.tanner;
+package script.java.tanner;
 
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.Definitions;

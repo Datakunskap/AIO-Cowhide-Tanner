@@ -1,7 +1,6 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.Main;
-import lamerton.troy.tanner.data.MuleArea;
+import script.java.tanner.Main;
 import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.Login;
 import org.rspeer.runetek.api.Worlds;

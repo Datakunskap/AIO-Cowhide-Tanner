@@ -1,4 +1,4 @@
-package lamerton.troy.tanner;
+package script.java.tanner;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

@@ -1,11 +1,10 @@
-package lamerton.troy.tanner.tasks;
+package script.java.tanner.tasks;
 
-import lamerton.troy.tanner.ExGrandExchange;
-import lamerton.troy.tanner.Main;
-import lamerton.troy.tanner.data.Rings;
+import script.java.tanner.ExGrandExchange;
+import script.java.tanner.Main;
+import script.java.tanner.data.Rings;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.scene.Npc;
-import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
@@ -38,10 +37,10 @@ public class BuyGE extends Task {
             Main.checkedBank = true;
         }
 
-        if (Rings.hasChargedRingW()) {
+        if (Rings.hasChargedRingW() || !Main.willBuyW) {
             Main.newRingW = false;
         }
-        if (Rings.hasChargedRingD()) {
+        if (Rings.hasChargedRingD() || ! Main.willBuyD) {
             Main.newRingD = false;
         }
 
@@ -76,7 +75,11 @@ public class BuyGE extends Task {
 
         buyQuantity = Main.gp / Main.cowhidePrice;
         if(Main.COWHIDE == 1739) {
-            buyQuantity = 2300;
+            if (Main.gp > 375000) {
+                buyQuantity = 2300;
+            } else {
+                buyQuantity = Main.gp / Main.cowhidePrice;
+            }
         }
 
 

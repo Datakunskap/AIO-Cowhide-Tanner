@@ -1,4 +1,4 @@
-package lamerton.troy.tanner.data;
+package script.java.tanner.data;
 
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
