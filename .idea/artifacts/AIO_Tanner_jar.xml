@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="AIO Tanner:jar">
+    <output-path>$USER_HOME$/Documents/RSPeer/scripts</output-path>
+    <root id="archive" name="AIO Tanner.jar">
+      <element id="module-output" name="AIO Tanner" />
+    </root>
+  </artifact>
+</component>

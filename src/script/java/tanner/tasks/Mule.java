@@ -22,23 +22,24 @@ import java.util.TreeMap;
 
 public class Mule extends Task {
 
-    public int Gold;
-    public int Gold2;
-    public int gold3;
-    public String status1;
-    private final String user = "milleja1";
+    private int Gold;
+    private int Gold2;
+    private int gold3;
+    private final String user = Main.muleName;
     private final int muleAmnt = Main.muleAmnt;
-    private final int muleWorld = 301;
+    private final int muleWorld = Main.muleWorld;
     private final int muleKeep = Main.muleKeep;
-    public String status = "needgold";
-    public static String Username;
-    public static String Password;
+    private String status = "needgold";
+    private static String Username;
+    private static String Password;
     private boolean muleing = false;
     private int begWorld = -1;
+    private static final String MULE_FILE_PATH = System.getProperty("user.home") + "\\Documents\\RSPeer\\cache\\data\\scat's mule.txt";
 
     private void loginMule() {
+        String status1;
         try {
-            File file = new File("C:" + File.separator + "Mule"+ File.separator + "mule.txt");
+            File file = new File(MULE_FILE_PATH);
 
             if (!file.exists()) {
                 file.createNewFile();
@@ -61,9 +62,9 @@ public class Mule extends Task {
 
     }
 
-    public void logoutMule() {
+    public static void logoutMule() {
         try {
-            File file = new File("C:" + File.separator + "Mule"+ File.separator + "mule.txt");
+            File file = new File(MULE_FILE_PATH);
 
             if (!file.exists()) {
                 Log.info("Logout file not found");

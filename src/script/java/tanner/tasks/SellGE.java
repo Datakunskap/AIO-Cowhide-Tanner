@@ -9,18 +9,15 @@ import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.scene.Npcs;
-import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
-
-import java.io.IOException;
 
 public class SellGE extends Task {
 
     @Override
     public boolean validate() {
-        return Main.restock && !Main.sold && Main.location.getGEArea().contains(Players.getLocal()) && !Main.isMuling;
+        return Main.restock && !Main.sold && Main.GE_LOCATION.containsPlayer() && !Main.isMuling;
     }
 
     @Override
@@ -34,7 +31,7 @@ public class SellGE extends Task {
             Log.fine("Selling");
             Npc n = Npcs.getNearest(x -> x != null && x.getName().contains("Grand Exchange Clerk"));
             if (n != null) {
-                Time.sleepUntil(() -> n == null || n.interact("Exchange"), 1000, 10000);
+                Time.sleepUntil(() -> n.interact("Exchange"), 1000, 10000);
                 Time.sleep(700, 1300);
             }
             return 1000;
@@ -44,11 +41,13 @@ public class SellGE extends Task {
             Main.geSet = false;
         }
 
-        if (!sellRemainingHides()) {
+        // needs older account
+        /*if (!sellRemainingHides()) {
             GrandExchange.collectAll();
             return 1000;
-        }
+        }*/
 
+        // bc issues with Buraks ExGrandExchange when selling
         if (Inventory.contains(Main.LEATHER_NOTE)) {
             Log.fine("Selling Leathers");
             GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL);
@@ -70,9 +69,9 @@ public class SellGE extends Task {
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
             Keyboard.pressEnter();
+            Main.startTime = System.currentTimeMillis();
         }
 
-        boolean maxHideSet = false;
         if (GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
                 !Inventory.contains(Main.LEATHER_NOTE) && !Inventory.contains(Main.LEATHERS[0])) {
             GrandExchange.collectAll();
@@ -86,16 +85,6 @@ public class SellGE extends Task {
             Main.geSet = false;
             Main.decSellPrice = 0;
             Main.timesPriceChanged = 0;
-
-            if (Main.restockMaxProfitHide) {
-                Log.fine("Calculating most profitable hide...");
-                try {
-                    Main.setMaxProfitHide();
-                    maxHideSet = true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         if (GrandExchange.getFirstActive() == null && !GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
@@ -106,16 +95,6 @@ public class SellGE extends Task {
             Main.geSet = false;
             Main.decSellPrice = 0;
             Main.timesPriceChanged = 0;
-
-            if (!maxHideSet && Main.calcMacProfitOnStart && Main.restockMaxProfitHide) {
-                Log.fine("Calculating most profitable hide...");
-                try {
-                    Main.setMaxProfitHide();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Main.calcMacProfitOnStart = false;
-            }
         }
 
         Main.checkTime();
@@ -140,7 +119,7 @@ public class SellGE extends Task {
         return 1000;
     }
 
-    private boolean sellRemainingHides() {
+    /*private boolean sellRemainingHides() {
         if (Inventory.contains(Main.COWHIDE+1)) {
             Log.fine("Selling Remaining Hides");
             GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL);
@@ -177,5 +156,5 @@ public class SellGE extends Task {
             GrandExchange.collectAll();
             return true;
         }
-    }
+    }*/
 }

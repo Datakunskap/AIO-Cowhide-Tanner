@@ -9,7 +9,6 @@ class WalkingHelper {
     static boolean shouldSetDestination() {
         // small chance to force new destination in case of the rare problem:
         // having a destination set but player is not moving towards it
-        // I don't trust Players.getLocal().isMoving() for this
         if (Random.nextInt(1, 200) == 1) {
             return true;
         }
@@ -23,11 +22,7 @@ class WalkingHelper {
         }
 
         // almost at destination
-        if (Movement.getDestinationDistance() <= Random.nextInt(2,3)) {
-            return true;
-        }
-
-        return false;
+        return Movement.getDestinationDistance() <= Random.nextInt(2,3);
     }
 
     static boolean shouldEnableRun() {
@@ -35,7 +30,7 @@ class WalkingHelper {
             return false;
         }
         if (Random.nextInt(1, 1000) == 1) {
-            // sometimes I like to random enable run, so my bot should too
+            // sometimes I like to random enable run
             return true;
         }
         return Movement.getRunEnergy() > Random.nextInt(4, 25);

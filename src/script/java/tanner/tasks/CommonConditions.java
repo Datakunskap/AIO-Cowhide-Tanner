@@ -9,7 +9,7 @@ import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 
-class Conditions {
+class CommonConditions {
     // True if got anything other than coins or cowhide
     static boolean gotJunkOrLeather() {
         return Inventory.contains(
@@ -22,13 +22,13 @@ class Conditions {
     static boolean gotCowhide() {
         return Inventory.contains(Main.COWHIDE) && !Inventory.contains(Main.COWHIDE+1);
     }
-    static boolean gotHide() {
+    /*static boolean gotHide() {
         return Inventory.contains(Main.HIDES);
-    }
+    }*/
 
     static boolean gotEnoughCoins() {
         Item coins = Inventory.getFirst("Coins");
-        return coins != null && coins.getStackSize() >= 20;
+        return coins != null && coins.getStackSize() >= 1;
     }
 
     static boolean nearTanner() {

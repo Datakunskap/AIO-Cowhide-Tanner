@@ -14,20 +14,15 @@ public class TanHide extends Task {
 
     public static int TANNER_ID = 3231;
 
-    private Main taskRunner;
-    public TanHide(Main taskRunner) {
-        this.taskRunner = taskRunner;
-    }
-
     @Override
     public boolean validate() {
-        return (Conditions.nearTanner() && Conditions.gotEnoughCoins() && Conditions.gotCowhide()) &&
+        return (CommonConditions.nearTanner() && CommonConditions.gotEnoughCoins() && CommonConditions.gotCowhide()) &&
                 !Main.restock && !Main.isMuling;
     }
 
     @Override
     public int execute() {
-        if (Conditions.tanInterfaceIsOpen()) {
+        if (CommonConditions.tanInterfaceIsOpen()) {
             InterfaceComponent leatherComponent = null;
             // Cow
             if (Main.COWHIDE == 1739) {
@@ -52,8 +47,8 @@ public class TanHide extends Task {
 
             if (leatherComponent != null && leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
                 // wait for all cowhides to turn into leather
-                if (Time.sleepUntil(() -> !Conditions.gotCowhide(), 3000)) {
-                    taskRunner.totalTanned += Inventory.getCount(taskRunner.LEATHERS[0]);
+                if (Time.sleepUntil(() -> !CommonConditions.gotCowhide(), 3000)) {
+                    Main.totalTanned += Inventory.getCount(Main.LEATHERS[0]);
                     return 300;
                 }
             }
@@ -61,7 +56,7 @@ public class TanHide extends Task {
         } else {
             Npc tanner = Npcs.getNearest(TANNER_ID);
             if (tanner.interact("Trade")) {
-                Time.sleepUntil(Conditions::tanInterfaceIsOpen, 7000);
+                Time.sleepUntil(CommonConditions::tanInterfaceIsOpen, 7000);
                 return 400;
             }
             return 600;
