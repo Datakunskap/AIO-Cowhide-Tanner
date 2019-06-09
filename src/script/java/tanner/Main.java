@@ -39,6 +39,14 @@ public class Main extends TaskScript implements RenderListener {
     public static int resetGeTime = 5;
     // Amount to increase/decrease each interval
     public static int intervalAmnt = 5;
+    // Kill cows restock option
+    public static boolean killCows = false;
+    // Loot hides restock option
+    public static boolean lootCows = false;
+    // Food choice
+    public static String food = "Trout";
+    // Amount of hide to loot each restock
+    public static int lootAmount = 0;
     // Amount to mule at
     public static int muleAmnt = 1000000;
     // Amount to keep from mule
@@ -47,6 +55,9 @@ public class Main extends TaskScript implements RenderListener {
     public static String muleName = "";
     // GE area to mule
     public static MuleArea muleArea = MuleArea.GE_NE;
+    // Mules World
+    public static int muleWorld = 301;
+
 
     ////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -62,7 +73,6 @@ public class Main extends TaskScript implements RenderListener {
     public static boolean isMuling = false;
     public static boolean geSet = false;
     public static int gp = 0;
-    public static int muleWorld = 301;
     public static int amntMuled = 0;
     public static boolean checkRestock = true;
     public static long startTime = 0;
@@ -71,12 +81,7 @@ public class Main extends TaskScript implements RenderListener {
     public static int decSellPrice = 0;
     public static int incBuyPrice = 0;
     public static int timesPriceChanged = 0;
-    public static boolean killCows = false;
-    public static boolean lootCows = false;
-    public static String food = "Trout";
-    public static int lootAmount = 0;
     public static int cowHideCount = 0;
-    public static boolean changedMode = false;
 
     public static int[] HIDES = {
             1739, // cowhide
