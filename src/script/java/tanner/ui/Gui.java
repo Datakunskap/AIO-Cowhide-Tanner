@@ -119,7 +119,7 @@ public class Gui extends JFrame {
         restockOption = new JComboBox(RESTOCK_OPTIONS);
         foodLabel = new JLabel("Food To Use:");
         food = new JTextField();
-        foodAmntLabel = new JLabel("Amount Of Food To Keep In inventory:");
+        foodAmntLabel = new JLabel("Amount Of Food To Keep In Inventory:");
         foodAmnt = new JTextField();
         lootAmountLabel = new JLabel("Number Of Hides To Loot:");
         lootAmount = new JTextField();
