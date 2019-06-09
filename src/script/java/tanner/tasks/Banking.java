@@ -46,14 +46,10 @@ public class Banking {
         // Calculate GP to spend
         Main.gp = Bank.getCount(995);
         Main.setPrices();
+
         // Keep X gp for tanning
-        if (Main.COWHIDE != 1739) {
-            int tanningGp = (Main.gp / Main.cowhidePrice) * 20;
-            Main.gp -= tanningGp;
-        } else {
-            int tanningGp = (Main.gp / Main.cowhidePrice) * 3;
-            Main.gp -= tanningGp;
-        }
+        int tanningGp = Main.gp / Main.cowhidePrice;
+        Main.gp -= tanningGp;
     }
 
     public static void openAndDepositAll() {
@@ -64,6 +60,12 @@ public class Banking {
 
         Bank.depositInventory();
         Time.sleepUntil(() -> Inventory.isEmpty(), 5000);
+
+        if (Main.killCows && Main.foodAmnt > 0 &&
+                Bank.contains(Main.food) && !Inventory.contains(Main.food)) {
+            Bank.withdraw(Main.food, Main.foodAmnt);
+            Time.sleepUntil(() -> Inventory.contains(Main.food), 5000);
+        }
         Main.cowHideCount = Bank.getCount(Main.COWHIDE);
     }
 }

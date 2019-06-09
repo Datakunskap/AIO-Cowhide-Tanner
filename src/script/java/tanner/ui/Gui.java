@@ -42,6 +42,8 @@ public class Gui extends JFrame {
     private JTextField food;
     private JLabel lootAmountLabel;
     private JTextField lootAmount;
+    private JLabel foodAmntLabel;
+    private JTextField foodAmnt;
 
     public Gui(Main ctx) {
         this.ctx = ctx;
@@ -62,8 +64,11 @@ public class Gui extends JFrame {
             Main.lootCows = false;
 
             Main.food = food.getText();
-            if(lootAmount != null && !lootAmount.getText().equals(""))
+            if(lootAmount != null && foodAmnt != null &&
+                    !lootAmount.getText().equals("") && !foodAmnt.getText().equals("")) {
                 Main.lootAmount = Integer.parseInt(lootAmount.getText());
+                Main.foodAmnt = Integer.parseInt(foodAmnt.getText());
+            }
         // loot hide
         } else {
             Main.killCows = false;
@@ -114,6 +119,8 @@ public class Gui extends JFrame {
         restockOption = new JComboBox(RESTOCK_OPTIONS);
         foodLabel = new JLabel("Food To Use:");
         food = new JTextField();
+        foodAmntLabel = new JLabel("Amount Of Food To Keep In inventory:");
+        foodAmnt = new JTextField();
         lootAmountLabel = new JLabel("Number Of Hides To Loot:");
         lootAmount = new JTextField();
         addHidePriceLabel = new JLabel("Increase Set Buying GP Per Hide By:");
@@ -211,6 +218,8 @@ public class Gui extends JFrame {
                 p1.add(lootAmount, "wrap, growx");
                 p1.add(foodLabel, "wrap, growx");
                 p1.add(food, "wrap, growx");
+                p1.add(foodAmntLabel, "wrap, growx");
+                p1.add(foodAmnt, "wrap, growx");
             } else {
                 p1.add(lootAmountLabel, "wrap, growx");
                 p1.add(lootAmount, "wrap, growx");

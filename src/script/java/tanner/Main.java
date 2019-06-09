@@ -45,6 +45,8 @@ public class Main extends TaskScript implements RenderListener {
     public static boolean lootCows = false;
     // Food choice
     public static String food = "Trout";
+    // Food Amount
+    public static int foodAmnt = 0;
     // Amount of hide to loot each restock
     public static int lootAmount = 0;
     // Amount to mule at
@@ -57,7 +59,6 @@ public class Main extends TaskScript implements RenderListener {
     public static MuleArea muleArea = MuleArea.GE_NE;
     // Mules World
     public static int muleWorld = 301;
-
 
     ////////////////////////////////////////////////////////////////////////////////////
 /*
