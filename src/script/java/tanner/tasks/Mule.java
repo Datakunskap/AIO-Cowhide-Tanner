@@ -1,5 +1,6 @@
 package script.java.tanner.tasks;
 
+import org.rspeer.script.Script;
 import script.java.tanner.Main;
 import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.Login;
@@ -34,7 +35,7 @@ public class Mule extends Task {
     private static String Password;
     private boolean muleing = false;
     private int begWorld = -1;
-    private static final String MULE_FILE_PATH = System.getProperty("user.home") + "\\Documents\\RSPeer\\cache\\data\\scat's mule.txt";
+    private static final String MULE_FILE_PATH = Script.getDataDirectory() + "\\scat's mule.txt";
 
     private void loginMule() {
         String status1;

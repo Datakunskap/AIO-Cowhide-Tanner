@@ -61,7 +61,7 @@ public class Gui extends JFrame {
         // kill cows + loot hide
         } else if (restockOption.getSelectedItem().equals(RESTOCK_OPTIONS[1])) {
             Main.killCows = true;
-            Main.lootCows = false;
+            Main.lootCows = true;
 
             Main.food = food.getText();
             if(lootAmount != null && foodAmnt != null &&
