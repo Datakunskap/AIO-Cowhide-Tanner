@@ -9,9 +9,15 @@ import script.java.tanner.Main;
 
 public class AttackCow extends Task {
 
+    private Main main;
+
+    public AttackCow(Main main) {
+        this.main = main;
+    }
+
     @Override
     public boolean validate() {
-        return Main.restock && Main.killCows && Main.COW_LOCATION.containsPlayer() &&
+        return main.restock && main.killCows && main.COW_LOCATION.containsPlayer() &&
                 !Players.getLocal().isAnimating() && Players.getLocal().getHealthPercent() > 0;
     }
 

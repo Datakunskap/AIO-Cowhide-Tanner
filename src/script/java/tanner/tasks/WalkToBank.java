@@ -9,11 +9,20 @@ import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.script.task.Task;
 
 public class WalkToBank extends Task {
+
+    private Main main;
+    private CommonConditions cc;
+
+    public WalkToBank (Main main) {
+        this.main = main;
+        cc = new CommonConditions(main);
+    }
+
     @Override
     public boolean validate() {
         // True if player is far away from the bank
-        return (!CommonConditions.atBank() && (!CommonConditions.gotCowhide() || !CommonConditions.gotEnoughCoins())) &&
-                !Main.restock && !Main.isMuling;
+        return (!cc.atBank() && (!cc.gotCowhide() || !cc.gotEnoughCoins())) &&
+                !main.restock && !main.isMuling;
     }
 
     @Override
@@ -24,7 +33,7 @@ public class WalkToBank extends Task {
         }
         if (WalkingHelper.shouldSetDestination()) {
             if (Movement.walkToRandomized(BankLocation.AL_KHARID.getPosition())) {
-                Time.sleepUntil(CommonConditions::atBank, Random.mid(1800, 2400));
+                Time.sleepUntil(cc::atBank, Random.mid(1800, 2400));
             }
         }
         return 600;

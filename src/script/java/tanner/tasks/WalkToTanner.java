@@ -9,11 +9,19 @@ import org.rspeer.script.task.Task;
 
 public class WalkToTanner extends Task {
 
+    private Main main;
+    private CommonConditions cc;
+
+    public WalkToTanner (Main main) {
+        this.main = main;
+        cc = new CommonConditions(main);
+    }
+
     @Override
     public boolean validate() {
         // True if player is far away from the tanner
-        return (!CommonConditions.nearTanner() && CommonConditions.gotCowhide() && CommonConditions.gotEnoughCoins()) &&
-                !Main.restock && !Main.isMuling;
+        return (!cc.nearTanner() && cc.gotCowhide() && cc.gotEnoughCoins()) &&
+                !main.restock && !main.isMuling;
     }
 
     @Override
@@ -23,8 +31,8 @@ public class WalkToTanner extends Task {
             WalkingHelper.enableRun();
         }
         if (WalkingHelper.shouldSetDestination()) {
-            if (Movement.walkToRandomized(Main.TANNER_AREA.getCenter())) {
-                Time.sleepUntil(CommonConditions::nearTanner, Random.mid(1800, 2400));
+            if (Movement.walkToRandomized(main.TANNER_AREA.getCenter())) {
+                Time.sleepUntil(cc::nearTanner, Random.mid(1800, 2400));
             }
         }
         return 600;

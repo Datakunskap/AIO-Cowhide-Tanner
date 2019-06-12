@@ -15,16 +15,24 @@ import org.rspeer.ui.Log;
 
 public class SellGE extends Task {
 
+    private Main main;
+    private Banking banking;
+
+    public SellGE (Main main) {
+        this.main = main;
+        banking = new Banking(main);
+    }
+
     @Override
     public boolean validate() {
-        return Main.restock && !Main.sold && Main.GE_LOCATION.containsPlayer() && !Main.isMuling;
+        return main.restock && !main.sold && main.GE_LOCATION.containsPlayer() && !main.isMuling;
     }
 
     @Override
     public int execute() {
-        if (!Main.checkedBank) {
-            Banking.execute();
-            Main.checkedBank = true;
+        if (!main.checkedBank) {
+            banking.execute();
+            main.checkedBank = true;
         }
 
         if (!GrandExchange.isOpen()) {
@@ -38,7 +46,7 @@ public class SellGE extends Task {
         }
 
         if (GrandExchangeSetup.getItem() == null) {
-            Main.geSet = false;
+            main.geSet = false;
         }
 
         // needs older account
@@ -48,20 +56,20 @@ public class SellGE extends Task {
         }*/
 
         // bc issues with Buraks ExGrandExchange when selling
-        if (Inventory.contains(Main.LEATHER_NOTE)) {
+        if (Inventory.contains(main.LEATHER_NOTE)) {
             Log.fine("Selling Leathers");
             GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL);
             Time.sleep(800);
-            GrandExchangeSetup.setItem(Main.LEATHER_NOTE);
+            GrandExchangeSetup.setItem(main.LEATHER_NOTE);
             Time.sleep(600);
-            GrandExchangeSetup.setPrice(Main.leatherPrice - Main.decSellPrice);
+            GrandExchangeSetup.setPrice(main.leatherPrice - main.decSellPrice);
             Time.sleep(600);
             GrandExchangeSetup.setQuantity(9999999);
             Time.sleep(600);
             GrandExchangeSetup.confirm();
             Time.sleep(600);
             if(GrandExchangeSetup.getItem() != null) {
-                Main.geSet = true;
+                main.geSet = true;
             }
 
             GrandExchange.collectAll();
@@ -69,92 +77,53 @@ public class SellGE extends Task {
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
             Keyboard.pressEnter();
-            Main.startTime = System.currentTimeMillis();
+            main.startTime = System.currentTimeMillis();
         }
 
         if (GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
-                !Inventory.contains(Main.LEATHER_NOTE) && !Inventory.contains(Main.LEATHERS[0])) {
+                !Inventory.contains(main.LEATHER_NOTE) && !Inventory.contains(main.LEATHER)) {
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
 
             Log.info("Done selling");
-            Main.sold = true;
-            Main.checkedBank = false;
-            Main.geSet = false;
-            Main.decSellPrice = 0;
-            Main.timesPriceChanged = 0;
+            main.sold = true;
+            main.checkedBank = false;
+            main.geSet = false;
+            main.decSellPrice = 0;
+            main.timesPriceChanged = 0;
         }
 
         if (GrandExchange.getFirstActive() == null && !GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
-                !Inventory.contains(Main.LEATHER_NOTE) && !Inventory.contains(Main.LEATHERS[0])){
+                !Inventory.contains(main.LEATHER_NOTE) && !Inventory.contains(main.LEATHER)){
             Log.info("Done selling 2");
-            Main.sold = true;
-            Main.checkedBank = false;
-            Main.geSet = false;
-            Main.decSellPrice = 0;
-            Main.timesPriceChanged = 0;
+            main.sold = true;
+            main.checkedBank = false;
+            main.geSet = false;
+            main.decSellPrice = 0;
+            main.timesPriceChanged = 0;
         }
 
-        Main.checkTime();
-        Log.info( "Waiting to complete  |  Time: " + Main.elapsedSeconds / 60 + "min(s)  |  Price changed " + Main.timesPriceChanged + " time(s)");
-        if(Main.elapsedSeconds > Main.resetGeTime * 60 &&
+        main.checkTime();
+        Log.info( "Waiting to complete  |  Time: " + main.elapsedSeconds / 60 + "min(s)  |  Price changed " + main.timesPriceChanged + " time(s)");
+        if(main.elapsedSeconds > main.resetGeTime * 60 &&
                 GrandExchange.getFirstActive() != null) {
-            Log.fine("Decreasing leather price by: " + Main.intervalAmnt);
-            while(!Inventory.contains(Main.LEATHERS[0]) && GrandExchange.getFirstActive() != null) {
+            Log.fine("Decreasing leather price by: " + main.intervalAmnt);
+            while(!Inventory.contains(main.LEATHER) && GrandExchange.getFirstActive() != null) {
                 Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).abort(), 1000, 5000);
                 GrandExchange.collectAll();
                 Time.sleep(5000);
                 GrandExchange.collectAll();
             }
-            Main.decSellPrice += Main.intervalAmnt;
-            Main.setPrices();
-            Main.startTime = System.currentTimeMillis();
-            Main.timesPriceChanged++;
+            main.decSellPrice += main.intervalAmnt;
+            main.setPrices();
+            main.startTime = System.currentTimeMillis();
+            main.timesPriceChanged++;
         }
 
         GrandExchange.collectAll();
         Keyboard.pressEnter();
         return 1000;
     }
-
-    /*private boolean sellRemainingHides() {
-        if (Inventory.contains(Main.COWHIDE+1)) {
-            Log.fine("Selling Remaining Hides");
-            GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL);
-            Time.sleep(800);
-            GrandExchangeSetup.setItem(Main.COWHIDE + 1);
-            Time.sleep(600);
-            GrandExchangeSetup.setPrice(Main.cowhideSellPrice - 25);
-            Time.sleep(600);
-            GrandExchangeSetup.setQuantity(9999999);
-            Time.sleep(600);
-            GrandExchangeSetup.confirm();
-            Time.sleep(600);
-
-            GrandExchange.collectAll();
-            Time.sleep(Random.mid(300, 600));
-            GrandExchange.collectAll();
-            Time.sleep(Random.mid(300, 600));
-            Keyboard.pressEnter();
-
-            if (GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) && !Inventory.contains(Main.COWHIDE + 1)) {
-                GrandExchange.collectAll();
-                Time.sleep(Random.mid(300, 600));
-                GrandExchange.collectAll();
-                Time.sleep(Random.mid(300, 600));
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        if (GrandExchange.getFirst(x -> x != null && x.getItemId() == Main.COWHIDE) != null) {
-            return false;
-        } else {
-            GrandExchange.collectAll();
-            return true;
-        }
-    }*/
 }

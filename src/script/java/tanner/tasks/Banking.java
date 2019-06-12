@@ -8,7 +8,13 @@ import org.rspeer.ui.Log;
 
 public class Banking {
 
-    public static int execute() {
+    private Main main;
+
+    Banking(Main main) {
+        this.main = main;
+    }
+
+    public int execute() {
         Log.info("Banking");
         openAndDepositAll();
 
@@ -20,39 +26,39 @@ public class Banking {
         Time.sleepUntil(() -> !Bank.contains(995), 5000);
 
         // Withdraw leathers to sell
-        if (Bank.contains(Main.LEATHERS[0])) {
+        if (Bank.contains(main.LEATHER)) {
             Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);
             Time.sleepUntil(() -> Bank.getWithdrawMode().equals(Bank.WithdrawMode.NOTE), 5000);
-            Bank.withdrawAll(Main.LEATHERS[0]);
-            Time.sleepUntil(() -> !Bank.contains(Main.LEATHERS[0]), 5000);
+            Bank.withdrawAll(main.LEATHER);
+            Time.sleepUntil(() -> !Bank.contains(main.LEATHER), 5000);
         }
 
         // Withdraw leftover hides to sell
-        if (Bank.contains(Main.COWHIDE)) {
+        if (Bank.contains(main.COWHIDE)) {
             Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);
             Time.sleepUntil(() -> Bank.getWithdrawMode().equals(Bank.WithdrawMode.NOTE), 5000);
-            Bank.withdrawAll(Main.COWHIDE);
-            Time.sleepUntil(() -> !Bank.contains(Main.COWHIDE), 5000);
+            Bank.withdrawAll(main.COWHIDE);
+            Time.sleepUntil(() -> !Bank.contains(main.COWHIDE), 5000);
         }
 
         Bank.close();
         Time.sleepUntil(() -> !Bank.isOpen(), 2000);
 
-        Main.startTime = System.currentTimeMillis();
+        main.startTime = System.currentTimeMillis();
         return 1000;
     }
 
-    private static void calcSpendAmount() {
+    private void calcSpendAmount() {
         // Calculate GP to spend
-        Main.gp = Bank.getCount(995);
-        Main.setPrices();
+        main.gp = Bank.getCount(995);
+        main.setPrices();
 
         // Keep X gp for tanning
-        int tanningGp = Main.gp / Main.cowhidePrice;
-        Main.gp -= tanningGp;
+        int tanningGp = main.gp / main.cowhidePrice;
+        main.gp -= tanningGp;
     }
 
-    public static void openAndDepositAll() {
+    public void openAndDepositAll() {
         while (!Bank.isOpen()) {
             Bank.open();
             Time.sleep(1000);
@@ -61,12 +67,12 @@ public class Banking {
         Bank.depositInventory();
         Time.sleepUntil(() -> Inventory.isEmpty(), 5000);
 
-        if (Main.killCows && Main.foodAmnt > 0 &&
-                Bank.contains(Main.food) && !Inventory.contains(Main.food)) {
-            Bank.withdraw(Main.food, Main.foodAmnt);
-            Time.sleepUntil(() -> Inventory.contains(Main.food), 5000);
+        if (main.killCows && main.foodAmnt > 0 &&
+                Bank.contains(main.food) && !Inventory.contains(main.food)) {
+            Bank.withdraw(main.food, main.foodAmnt);
+            Time.sleepUntil(() -> Inventory.contains(main.food), 5000);
         }
-        Main.cowHideCount = Bank.getCount(Main.COWHIDE);
+        main.cowHideCount = Bank.getCount(main.COWHIDE);
     }
 }
 

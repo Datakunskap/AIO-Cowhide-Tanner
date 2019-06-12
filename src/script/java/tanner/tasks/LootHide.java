@@ -9,19 +9,27 @@ import script.java.tanner.Main;
 
 public class LootHide extends Task {
 
+    private final String LOOT_ITEM = "Cowhide";
     private Pickable item;
-    private String itemToLoot = "Cowhide";
+
+    private Main main;
+    private Banking banking;
+
+    public LootHide (Main main) {
+        this.main = main;
+        banking = new Banking(main);
+    }
 
     @Override
     public boolean validate() {
-        if (Main.restock && Inventory.isFull()) {
-            Banking.openAndDepositAll();
+        if (main.restock && Inventory.isFull()) {
+            banking.openAndDepositAll();
             return false;
         }
 
-        item = Pickables.getNearest(itemToLoot);
-        return Main.restock && Main.lootCows && item != null && item.isPositionInteractable() &&
-                !Inventory.isFull() && Main.COW_LOCATION.containsPlayer();
+        item = Pickables.getNearest(LOOT_ITEM);
+        return main.restock && main.lootCows && item != null && item.isPositionInteractable() &&
+                !Inventory.isFull() && main.COW_LOCATION.containsPlayer();
     }
 
     @Override
@@ -38,12 +46,12 @@ public class LootHide extends Task {
     }
 
     private void checkHideAmount() {
-        if (Main.cowHideCount >= Main.lootAmount)
-            Main.restock = false;
+        if (main.cowHideCount >= main.lootAmount)
+            main.restock = false;
 
-        if (Inventory.contains(Main.COWHIDE) && ((Inventory.getCount(false, Main.COWHIDE) + Main.cowHideCount) >= Main.lootAmount))
-           Main.restock = false;
+        if (Inventory.contains(main.COWHIDE) && ((Inventory.getCount(false, main.COWHIDE) + main.cowHideCount) >= main.lootAmount))
+           main.restock = false;
 
-        Log.info("Total Hides: " + (Inventory.getCount(false, Main.COWHIDE) + Main.cowHideCount));
+        Log.info("Total Hides: " + (Inventory.getCount(false, main.COWHIDE) + main.cowHideCount));
     }
 }

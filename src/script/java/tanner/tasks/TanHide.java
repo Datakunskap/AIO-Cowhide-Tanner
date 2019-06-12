@@ -12,51 +12,36 @@ import org.rspeer.script.task.Task;
 
 public class TanHide extends Task {
 
-    public static int TANNER_ID = 3231;
+    private Main main;
+    private CommonConditions cc;
+
+    public TanHide (Main main) {
+        this.main = main;
+        cc = new CommonConditions(main);
+    }
 
     @Override
     public boolean validate() {
-        return (CommonConditions.nearTanner() && CommonConditions.gotEnoughCoins() && CommonConditions.gotCowhide()) &&
-                !Main.restock && !Main.isMuling;
+        return (cc.nearTanner() && cc.gotEnoughCoins() && cc.gotCowhide()) &&
+                !main.restock && !main.isMuling;
     }
 
     @Override
     public int execute() {
-        if (CommonConditions.tanInterfaceIsOpen()) {
-            InterfaceComponent leatherComponent = null;
-            // Cow
-            if (Main.COWHIDE == 1739) {
-                leatherComponent = Interfaces.getComponent(324, 124);
-            }
-            // Green
-            if (Main.COWHIDE == 1753) {
-                leatherComponent = Interfaces.getComponent(324, 128);
-            }
-            // Blue
-            if (Main.COWHIDE == 1751) {
-                leatherComponent = Interfaces.getComponent(324, 129);
-            }
-            // Red
-            if (Main.COWHIDE == 1749) {
-                leatherComponent = Interfaces.getComponent(324, 130);
-            }
-            // Black
-            if (Main.COWHIDE == 1747) {
-                leatherComponent = Interfaces.getComponent(324, 131);
-            }
-
+        if (cc.tanInterfaceIsOpen()) {
+            InterfaceComponent leatherComponent = Interfaces.getComponent(324, 124);;
             if (leatherComponent != null && leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
                 // wait for all cowhides to turn into leather
-                if (Time.sleepUntil(() -> !CommonConditions.gotCowhide(), 3000)) {
-                    Main.totalTanned += Inventory.getCount(Main.LEATHERS[0]);
+                if (Time.sleepUntil(() -> !cc.gotCowhide(), 3000)) {
+                    main.totalTanned += Inventory.getCount(main.LEATHER);
                     return 300;
                 }
             }
             return 600;
         } else {
-            Npc tanner = Npcs.getNearest(TANNER_ID);
+            Npc tanner = Npcs.getNearest(main.TANNER_ID);
             if (tanner.interact("Trade")) {
-                Time.sleepUntil(CommonConditions::tanInterfaceIsOpen, 7000);
+                Time.sleepUntil(cc::tanInterfaceIsOpen, 7000);
                 return 400;
             }
             return 600;

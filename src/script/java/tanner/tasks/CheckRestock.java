@@ -14,9 +14,17 @@ import org.rspeer.ui.Log;
 
 public class CheckRestock extends Task {
 
+    private Main main;
+    private Banking banking;
+
+    public CheckRestock(Main main) {
+        this.main = main;
+        banking = new Banking(main);
+    }
+
     @Override
     public boolean validate() {
-        return Main.restock && Main.checkRestock;
+        return main.restock && main.checkRestock;
     }
 
     @Override
@@ -33,12 +41,12 @@ public class CheckRestock extends Task {
         boolean hasH = false;
         boolean hasM = true;
 
-        if (Inventory.contains(Main.COWHIDE) || Inventory.contains(Main.COWHIDE + 1)) {
+        if (Inventory.contains(main.COWHIDE) || Inventory.contains(main.COWHIDE + 1)) {
             hasH = true;
         } else {
-            Banking.openAndDepositAll();
+            banking.openAndDepositAll();
 
-            if (Bank.contains(Main.COWHIDE)) {
+            if (Bank.contains(main.COWHIDE)) {
                 hasH = true;
             }
             if (Bank.getCount(995) < 1) {
@@ -50,21 +58,21 @@ public class CheckRestock extends Task {
             Log.fine("Restocking: ->");
             Time.sleep(1000);
             if (!hasH)
-                Main.printHide();
+                main.printHide();
 
             if (Bank.getCount(995) < 1) {
                 Log.fine("Out of money");
-                if (!Main.killCows && !Main.lootCows) {
+                if (!main.killCows && !main.lootCows) {
                     Log.fine("Selling Leathers");
                 }
             }
 
-            Main.restock = true;
+            main.restock = true;
         } else {
             Log.fine("Restock not necessary");
-            Main.restock = false;
+            main.restock = false;
         }
-        Main.checkRestock = false;
+        main.checkRestock = false;
         return 1000;
     }
 

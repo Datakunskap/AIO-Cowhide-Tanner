@@ -10,41 +10,45 @@ import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 
 class CommonConditions {
+
+    private Main main;
+
+    CommonConditions(Main main){
+        this.main = main;
+    }
+
     // True if got anything other than coins or cowhide
-    static boolean gotJunkOrLeather() {
+    boolean gotJunkOrLeather() {
         return Inventory.contains(
             item -> item != null
                 && !item.getName().equals("Coins")
-                && item.getId() != Main.COWHIDE
+                && item.getId() != main.COWHIDE
         );
     }
 
-    static boolean gotCowhide() {
-        return Inventory.contains(Main.COWHIDE) && !Inventory.contains(Main.COWHIDE+1);
+    boolean gotCowhide() {
+        return Inventory.contains(main.COWHIDE) && !Inventory.contains(main.COWHIDE+1);
     }
-    /*static boolean gotHide() {
-        return Inventory.contains(Main.HIDES);
-    }*/
 
-    static boolean gotEnoughCoins() {
+    boolean gotEnoughCoins() {
         Item coins = Inventory.getFirst("Coins");
         return coins != null && coins.getStackSize() >= 1;
     }
 
-    static boolean nearTanner() {
-        Npc tanner = Npcs.getNearest(TanHide.TANNER_ID);
-        return Main.TANNER_AREA.getCenter().distance(Players.getLocal()) < 10 && tanner != null && tanner.isPositionInteractable();
+    boolean nearTanner() {
+        Npc tanner = Npcs.getNearest(main.TANNER_ID);
+        return main.TANNER_AREA.getCenter().distance(Players.getLocal()) < 10 && tanner != null && tanner.isPositionInteractable();
     }
 
-    static boolean atBank() {
+    boolean atBank() {
         return BankLocation.AL_KHARID.getPosition().distance(Players.getLocal().getPosition()) <= 7;
     }
 
-    static boolean atGE() {
+    boolean atGE() {
         return BankLocation.GRAND_EXCHANGE.getPosition().distance(Players.getLocal().getPosition()) <= 7;
     }
 
-    static boolean tanInterfaceIsOpen() {
+    boolean tanInterfaceIsOpen() {
         return Interfaces.getComponent(324, 124) != null;
     }
 }

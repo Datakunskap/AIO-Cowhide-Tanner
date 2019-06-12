@@ -3,6 +3,7 @@ package script.java.tanner.ui;
 import net.miginfocom.swing.MigLayout;
 import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.commons.StopWatch;
+import org.rspeer.ui.Log;
 import script.java.tanner.Main;
 import script.java.tanner.data.MuleArea;
 
@@ -12,7 +13,7 @@ import javax.swing.*;
 
 public class Gui extends JFrame {
 
-    private Main ctx;
+    private Main main;
     private final String[] RESTOCK_OPTIONS = new String[]{"GE Restock", "Kill Cows + Loot Hides", "Loot Hides"};
 
     private JFrame frame;
@@ -45,65 +46,64 @@ public class Gui extends JFrame {
     private JLabel foodAmntLabel;
     private JTextField foodAmnt;
 
-    public Gui(Main ctx) {
-        this.ctx = ctx;
+    public Gui(Main main) {
+        this.main = main;
         initComponents();
         this.setVisible(false);
     }
 
     private void buttonStartActionPerformed() {
-        Main.timeRan = StopWatch.start();
+        main.timeRan = StopWatch.start();
 
         // ge restock
         if (restockOption.getSelectedItem().equals(RESTOCK_OPTIONS[0])) {
-            Main.killCows = false;
-            Main.lootCows = false;
+            main.killCows = false;
+            main.lootCows = false;
         // kill cows + loot hide
         } else if (restockOption.getSelectedItem().equals(RESTOCK_OPTIONS[1])) {
-            Main.killCows = true;
-            Main.lootCows = true;
+            main.killCows = true;
+            main.lootCows = true;
 
-            Main.food = food.getText();
+            main.food = food.getText();
             if(lootAmount != null && foodAmnt != null &&
                     !lootAmount.getText().equals("") && !foodAmnt.getText().equals("")) {
-                Main.lootAmount = Integer.parseInt(lootAmount.getText());
-                Main.foodAmnt = Integer.parseInt(foodAmnt.getText());
+                main.lootAmount = Integer.parseInt(lootAmount.getText());
+                main.foodAmnt = Integer.parseInt(foodAmnt.getText());
             }
         // loot hide
         } else {
-            Main.killCows = false;
-            Main.lootCows = true;
+            main.killCows = false;
+            main.lootCows = true;
 
-            Main.food = food.getText();
+            main.food = food.getText();
             if(lootAmount != null && !lootAmount.getText().equals(""))
-                Main.lootAmount = Integer.parseInt(lootAmount.getText());
+                main.lootAmount = Integer.parseInt(lootAmount.getText());
         }
 
         if (addHidePrice != null && !addHidePrice.getText().equals(""))
-            Main.addHidePrice = Integer.parseInt(addHidePrice.getText());
+            main.addHidePrice = Integer.parseInt(addHidePrice.getText());
         if (subLeatherPrice != null && !subLeatherPrice.getText().equals(""))
-            Main.subLeatherPrice = Integer.parseInt(subLeatherPrice.getText());
+            main.subLeatherPrice = Integer.parseInt(subLeatherPrice.getText());
         if (resetGeTime != null && !resetGeTime.getText().equals(""))
-            Main.resetGeTime = Integer.parseInt(resetGeTime.getText());
+            main.resetGeTime = Integer.parseInt(resetGeTime.getText());
         if (intervalAmnt != null && !intervalAmnt.getText().equals(""))
-            Main.intervalAmnt = Integer.parseInt(intervalAmnt.getText());
+            main.intervalAmnt = Integer.parseInt(intervalAmnt.getText());
 
         // handles if blank wont mule
         if (muleAmnt != null && muleKeep != null && muleArea != null && muleName != null && muleWorld != null &&
                 !muleAmnt.getText().equals("") && !muleKeep.getText().equals("") && !muleWorld.getText().equals("")) {
-            Main.muleAmnt = Integer.parseInt(muleAmnt.getText());
-            Main.muleKeep = Integer.parseInt(muleKeep.getText());
-            Main.muleWorld = Integer.parseInt(muleWorld.getText());
-            Main.muleArea = (MuleArea) muleArea.getSelectedItem();
-            Main.muleName = muleName.getText();
-            Main.muleWorld = Integer.parseInt(muleWorld.getText());
+            main.muleAmnt = Integer.parseInt(muleAmnt.getText());
+            main.muleKeep = Integer.parseInt(muleKeep.getText());
+            main.muleWorld = Integer.parseInt(muleWorld.getText());
+            main.muleArea = (MuleArea) muleArea.getSelectedItem();
+            main.muleName = muleName.getText();
         } else {
-            Main.muleAmnt = Integer.MAX_VALUE;
-            Main.muleKeep = Integer.MAX_VALUE;
+            main.muleAmnt = Integer.MAX_VALUE;
+            main.muleKeep = Integer.MAX_VALUE;
         }
 
         frame.setVisible(false);
-        ctx.setPaused(false);
+        main.setPaused(false);
     }
 
 

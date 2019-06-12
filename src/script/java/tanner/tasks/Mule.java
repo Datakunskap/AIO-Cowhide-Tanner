@@ -1,15 +1,12 @@
 package script.java.tanner.tasks;
 
+import org.rspeer.runetek.api.component.*;
 import org.rspeer.script.Script;
 import script.java.tanner.Main;
 import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.Login;
 import org.rspeer.runetek.api.Worlds;
 import org.rspeer.runetek.api.commons.Time;
-import org.rspeer.runetek.api.component.Dialog;
-import org.rspeer.runetek.api.component.EnterInput;
-import org.rspeer.runetek.api.component.Trade;
-import org.rspeer.runetek.api.component.WorldHopper;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.movement.Movement;
@@ -26,16 +23,18 @@ public class Mule extends Task {
     private int Gold;
     private int Gold2;
     private int gold3;
-    private final String user = Main.muleName;
-    private final int muleAmnt = Main.muleAmnt;
-    private final int muleWorld = Main.muleWorld;
-    private final int muleKeep = Main.muleKeep;
     private String status = "needgold";
     private static String Username;
     private static String Password;
     private boolean muleing = false;
     private int begWorld = -1;
     private static final String MULE_FILE_PATH = Script.getDataDirectory() + "\\scat's mule.txt";
+
+    private Main main;
+
+    public Mule(Main main) {
+        this.main = main;
+    }
 
     private void loginMule() {
         String status1;
@@ -82,31 +81,37 @@ public class Mule extends Task {
     }
 
     @Override
-    public boolean validate() { return Inventory.getCount(true, 995) >= muleAmnt || muleing; }
+    public boolean validate() {
+        return Inventory.getCount(true, 995) >= main.muleAmnt || Bank.getCount(995) >= main.muleAmnt || muleing; }
 
     @Override
     public int execute() {
-        Main.isMuling = true;
+        main.isMuling = true;
+		if (Bank.isOpen() && Bank.getCount(995) >= main.muleAmnt) {
+			Bank.withdrawAll(995);
+			Time.sleepUntil(() -> !Bank.contains(995), 5000);
+		}
+		
         loginMule();
 
-        if(Worlds.getCurrent() != muleWorld){
+        if(Worlds.getCurrent() != main.muleWorld){
             begWorld = Worlds.getCurrent();
-            WorldHopper.hopTo(muleWorld);
-            Time.sleepUntil(() -> Worlds.getCurrent() == muleWorld, 10000);
+            WorldHopper.hopTo(main.muleWorld);
+            Time.sleepUntil(() -> Worlds.getCurrent() == main.muleWorld, 10000);
         }
 
         if (status != null) {
             status = status.trim();
         }
-        if (org.rspeer.runetek.api.component.Dialog.canContinue()) {
+        if (Dialog.canContinue()) {
             Dialog.processContinue();
             Time.sleep(1000);
         }
-        if (!Main.muleArea.getMuleArea().contains(Players.getLocal())) {
+        if (!main.muleArea.getMuleArea().contains(Players.getLocal())) {
             if (WalkingHelper.shouldEnableRun()) {
                 WalkingHelper.enableRun();
             }
-            Movement.setWalkFlag(Main.muleArea.getMuleArea().getTiles().get(Main.randInt(0, Main.muleArea.getMuleArea().getTiles().size()-1)));
+            Movement.setWalkFlag(main.muleArea.getMuleArea().getTiles().get(main.randInt(0, main.muleArea.getMuleArea().getTiles().size()-1)));
         }
 
         if (Inventory.getFirst(995) != null) {
@@ -126,8 +131,8 @@ public class Mule extends Task {
                 Time.sleep(200);
                 Keyboard.pressEnter();
             }
-            if (Players.getNearest(user) != null && !Trade.isOpen()) {
-                Players.getNearest(user).interact("Trade with");
+            if (Players.getNearest(main.muleName) != null && !Trade.isOpen()) {
+                Players.getNearest(main.muleName).interact("Trade with");
                 Time.sleep(3000);
             }
             if (Inventory.getFirst(995) != null) {
@@ -143,7 +148,7 @@ public class Mule extends Task {
                             Trade.offer("Coins", x -> x.contains("X"));
                             Time.sleep(1000);
                             if (EnterInput.isOpen()) {
-                                EnterInput.initiate(Coins - muleKeep);
+                                EnterInput.initiate(Coins - main.muleKeep);
                                 Time.sleep(1000);
                             }
                             if (Time.sleepUntil(() -> Trade.contains(true, 995), 500, 3500)) {
@@ -165,13 +170,13 @@ public class Mule extends Task {
                             Log.fine("Trade completed shutting down mule");
                             logoutMule();
                             muleing = false;
-                            Main.amntMuled += (Coins - Main.muleKeep);
+                            main.amntMuled += (Coins - main.muleKeep);
                             if(begWorld != -1) {
                                 WorldHopper.hopTo(begWorld);
                                 Time.sleepUntil(() -> Worlds.getCurrent() == begWorld, 10000);
                             }
                             Time.sleep(8000, 10000);
-                            Main.isMuling = false;
+                            main.isMuling = false;
                         }
                         Time.sleep(700);
                     }

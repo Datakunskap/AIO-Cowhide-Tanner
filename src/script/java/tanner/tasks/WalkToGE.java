@@ -10,10 +10,18 @@ import org.rspeer.ui.Log;
 
 public class WalkToGE extends Task {
 
+    private Main main;
+    private CommonConditions cc;
+
+    public WalkToGE (Main main) {
+        this.main = main;
+        cc = new CommonConditions(main);
+    }
+
     @Override
     public boolean validate() {
-        return !Main.GE_LOCATION.containsPlayer() && Main.restock &&
-                !Main.isMuling && !Main.killCows && !Main.lootCows;
+        return !main.GE_LOCATION.containsPlayer() && main.restock &&
+                !main.isMuling && !main.killCows && !main.lootCows;
     }
 
     @Override
@@ -25,7 +33,7 @@ public class WalkToGE extends Task {
         Log.info("Walking to GE");
         if (WalkingHelper.shouldSetDestination()) {
             if (Movement.walkToRandomized(BankLocation.GRAND_EXCHANGE.getPosition())) {
-                Time.sleepUntil(CommonConditions::atGE, Random.mid(1800, 2400));
+                Time.sleepUntil(cc::atGE, Random.mid(1800, 2400));
             }
         }
         return 600;
