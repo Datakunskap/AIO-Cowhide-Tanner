@@ -16,7 +16,6 @@ import org.rspeer.runetek.event.types.RenderEvent;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
 import org.rspeer.script.task.TaskScript;
-import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 import script.java.tanner.ui.Gui;
 
@@ -25,9 +24,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Duration;
 
-@ScriptMeta(name = "AIO Tanner", developer = "DrScatman", desc = "Tans cowhide for $" +
-        "F2P money making", category =
-        ScriptCategory.MONEY_MAKING, version = 0.01)
+@ScriptMeta(name = "AIO Cowhide Tanner", developer = "DrScatman", desc = "Tans cowhide for $" +
+        "F2P money making", category = ScriptCategory.MONEY_MAKING, version = 0.01)
 public class Main extends TaskScript implements RenderListener {
     ////////////////////////////////////////////////////////////////////////////////////
 
