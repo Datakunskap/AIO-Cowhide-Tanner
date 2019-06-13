@@ -36,8 +36,8 @@ class WalkingHelper {
         return Movement.getRunEnergy() > Random.nextInt(4, 25);
     }
 
-    static boolean enableRun() {
+    static void enableRun() {
         Movement.toggleRun(true);
-        return Time.sleepUntil(Movement::isRunEnabled, 500);
+        Time.sleepUntil(Movement::isRunEnabled, 500);
     }
 }

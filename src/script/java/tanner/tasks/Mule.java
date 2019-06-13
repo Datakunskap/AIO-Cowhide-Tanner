@@ -21,11 +21,10 @@ import java.util.TreeMap;
 public class Mule extends Task {
 
     private int Gold;
-    private int Gold2;
-    private int gold3;
+    private int Gold2 = 0;
     private String status = "needgold";
-    private static String Username;
-    private static String Password;
+    private static String Username = null;
+    private static String Password = null;
     private boolean muleing = false;
     private int begWorld = -1;
     private static final String MULE_FILE_PATH = Script.getDataDirectory() + "\\scat's mule.txt";
@@ -118,7 +117,7 @@ public class Mule extends Task {
             Gold = Inventory.getFirst(995).getStackSize();
         }
 
-        gold3 = Gold2 - Gold;
+        int gold3 = Gold2 - Gold;
 
         if (status.contains("needgold")) {
             if (!Game.isLoggedIn() && Username != null && Password != null) {

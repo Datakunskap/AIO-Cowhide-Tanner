@@ -13,6 +13,8 @@ import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
+import java.util.Objects;
+
 public class BuyGE extends Task {
 
     private int buyQuantity;
@@ -88,7 +90,7 @@ public class BuyGE extends Task {
                 Npcs.getNearest("Grand Exchange Clerk").interact("Exchange");
                 Time.sleep(main.randInt(700, 1300));
             }
-            Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED), 2000, 10000);
+            Time.sleepUntil(() -> GrandExchange.getFirst(Objects::nonNull).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED), 2000, 10000);
             GrandExchange.collectAll();
             Keyboard.pressEnter();
             Time.sleep(1500);
@@ -99,7 +101,7 @@ public class BuyGE extends Task {
         if(main.elapsedSeconds > main.resetGeTime * 60 && GrandExchange.getFirstActive() != null) {
             Log.fine("Increasing hide price by: " + main.intervalAmnt);
             while(GrandExchange.getFirstActive() != null) {
-                Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).abort(), 1000, 5000);
+                Time.sleepUntil(() -> GrandExchange.getFirst(Objects::nonNull).abort(), 1000, 5000);
                 GrandExchange.collectAll();
                 Time.sleep(5000);
                 GrandExchange.collectAll();

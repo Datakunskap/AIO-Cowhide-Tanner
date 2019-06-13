@@ -173,17 +173,12 @@ public class Main extends TaskScript implements RenderListener {
         // render time running
         g.setFont(new Font("TimesRoman", Font.BOLD, 20));
 
-        // sets rendered text color
-        Color color = Color.WHITE;
-        if (COWHIDE == 1739)
-            color = Color.YELLOW.darker();
-
         drawStringWithShadow(
                 g,
                 timeRan == null ? "00:00:00" : timeRan.toElapsedString(),
                 242,
                 21,
-                color
+                Color.YELLOW.darker()
         );
 
 
@@ -215,12 +210,11 @@ public class Main extends TaskScript implements RenderListener {
         int totalLeatherValue = totalTanned * leatherPrice;
         int totalProfit = (totalLeatherValue - totalTanned * cowhidePrice);
         int hourlyProfit = getHourlyRate(durationRunning) * (leatherPrice - cowhidePrice);
-        int[] stats = {
+        return new int[] {
                 totalTanned,
                 totalProfit,
                 hourlyProfit
         };
-        return stats;
     }
 
     public int randInt(int min, int max) {
@@ -228,15 +222,12 @@ public class Main extends TaskScript implements RenderListener {
             throw new IllegalArgumentException("max must be greater than min");
         }
         java.util.Random rand = new java.util.Random();
-        int randomNum = rand.nextInt(max - min + 1) + min;
-        return randomNum;
+        return rand.nextInt(max - min + 1) + min;
     }
 
     public void printHide() {
         // Cow
-        if (COWHIDE == 1739) {
-            Log.fine("Cowhide");
-        }
+        Log.fine("Cowhide");
     }
 
     public void checkTime() {

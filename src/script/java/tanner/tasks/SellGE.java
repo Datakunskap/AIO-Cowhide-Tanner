@@ -13,6 +13,8 @@ import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
+import java.util.Objects;
+
 public class SellGE extends Task {
 
     private Main main;
@@ -80,7 +82,7 @@ public class SellGE extends Task {
             main.startTime = System.currentTimeMillis();
         }
 
-        if (GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
+        if (GrandExchange.getFirst(Objects::nonNull).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
                 !Inventory.contains(main.LEATHER_NOTE) && !Inventory.contains(main.LEATHER)) {
             GrandExchange.collectAll();
             Time.sleep(Random.mid(300, 600));
@@ -95,7 +97,7 @@ public class SellGE extends Task {
             main.timesPriceChanged = 0;
         }
 
-        if (GrandExchange.getFirstActive() == null && !GrandExchange.getFirst(x -> x != null).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
+        if (GrandExchange.getFirstActive() == null && !GrandExchange.getFirst(Objects::nonNull).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
                 !Inventory.contains(main.LEATHER_NOTE) && !Inventory.contains(main.LEATHER)){
             Log.info("Done selling 2");
             main.sold = true;
@@ -111,7 +113,7 @@ public class SellGE extends Task {
                 GrandExchange.getFirstActive() != null) {
             Log.fine("Decreasing leather price by: " + main.intervalAmnt);
             while(!Inventory.contains(main.LEATHER) && GrandExchange.getFirstActive() != null) {
-                Time.sleepUntil(() -> GrandExchange.getFirst(x -> x != null).abort(), 1000, 5000);
+                Time.sleepUntil(() -> GrandExchange.getFirst(Objects::nonNull).abort(), 1000, 5000);
                 GrandExchange.collectAll();
                 Time.sleep(5000);
                 GrandExchange.collectAll();

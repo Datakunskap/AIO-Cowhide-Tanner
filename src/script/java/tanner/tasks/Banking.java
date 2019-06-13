@@ -58,14 +58,14 @@ public class Banking {
         main.gp -= tanningGp;
     }
 
-    public void openAndDepositAll() {
+    void openAndDepositAll() {
         while (!Bank.isOpen()) {
             Bank.open();
             Time.sleep(1000);
         }
 
         Bank.depositInventory();
-        Time.sleepUntil(() -> Inventory.isEmpty(), 5000);
+        Time.sleepUntil(Inventory::isEmpty, 5000);
 
         if (main.killCows && main.foodAmnt > 0 &&
                 Bank.contains(main.food) && !Inventory.contains(main.food)) {

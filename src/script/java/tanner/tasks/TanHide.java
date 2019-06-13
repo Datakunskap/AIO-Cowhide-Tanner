@@ -29,7 +29,7 @@ public class TanHide extends Task {
     @Override
     public int execute() {
         if (cc.tanInterfaceIsOpen()) {
-            InterfaceComponent leatherComponent = Interfaces.getComponent(324, 124);;
+            InterfaceComponent leatherComponent = Interfaces.getComponent(324, 124);
             if (leatherComponent != null && leatherComponent.interact(ActionOpcodes.INTERFACE_ACTION)) {
                 // wait for all cowhides to turn into leather
                 if (Time.sleepUntil(() -> !cc.gotCowhide(), 3000)) {
