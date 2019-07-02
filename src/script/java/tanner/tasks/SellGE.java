@@ -95,6 +95,7 @@ public class SellGE extends Task {
             main.geSet = false;
             main.decSellPrice = 0;
             main.timesPriceChanged = 0;
+            main.setHighestProfitLeather();
         }
 
         if (GrandExchange.getFirstActive() == null && !GrandExchange.getFirst(Objects::nonNull).getProgress().equals(RSGrandExchangeOffer.Progress.FINISHED) &&
@@ -105,6 +106,7 @@ public class SellGE extends Task {
             main.geSet = false;
             main.decSellPrice = 0;
             main.timesPriceChanged = 0;
+            main.setHighestProfitLeather();
         }
 
         main.checkTime();

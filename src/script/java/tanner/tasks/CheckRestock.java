@@ -1,14 +1,12 @@
 package script.java.tanner.tasks;
 
+import org.rspeer.runetek.api.commons.BankLocation;
 import script.java.tanner.Main;
-import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.GrandExchangeSetup;
-import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Inventory;
-import org.rspeer.runetek.api.input.menu.ActionOpcodes;
 import org.rspeer.script.task.Task;
 import org.rspeer.ui.Log;
 
@@ -35,7 +33,7 @@ public class CheckRestock extends Task {
             Bank.close();
         }
         if(GrandExchange.isOpen() || GrandExchangeSetup.isOpen()){
-            closeGE();
+            main.closeGE();
         }
 
         boolean hasH = false;
@@ -43,6 +41,11 @@ public class CheckRestock extends Task {
 
         if (Inventory.contains(main.COWHIDE) || Inventory.contains(main.COWHIDE + 1)) {
             hasH = true;
+            if (main.lootCows || main.killCows) {
+                if (Inventory.getCount(true, main.COWHIDE) < main.lootAmount) {
+                    hasH = false;
+                }
+            }
         } else {
             banking.openAndDepositAll();
 
@@ -67,6 +70,12 @@ public class CheckRestock extends Task {
                 }
             }
 
+            Bank.close();
+            Time.sleepUntil(() -> !Bank.isOpen(), 5000);
+            if(BankLocation.getNearest().equals(BankLocation.AL_KHARID)) {
+                main.teleportHome();
+            }
+
             main.restock = true;
         } else {
             Log.fine("Restock not necessary");
@@ -74,13 +83,5 @@ public class CheckRestock extends Task {
         }
         main.checkRestock = false;
         return 1000;
-    }
-
-    private void closeGE() {
-        while(GrandExchange.isOpen() || GrandExchangeSetup.isOpen()) {
-            InterfaceComponent X = Interfaces.getComponent(465, 2, 11);
-            X.interact(ActionOpcodes.INTERFACE_ACTION);
-        }
-
     }
 }

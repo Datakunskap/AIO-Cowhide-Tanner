@@ -1,11 +1,13 @@
 package script.java.tanner;
 
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
+import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.Interfaces;
-import org.rspeer.runetek.api.component.tab.Combat;
+import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.input.menu.ActionOpcodes;
+import org.rspeer.runetek.api.scene.Players;
 import script.java.tanner.data.Location;
 import script.java.tanner.data.MuleArea;
 import script.java.tanner.tasks.*;
@@ -63,8 +65,8 @@ public class Main extends TaskScript implements RenderListener {
     DO NOT CHANGE
 */
     public final int COWHIDE = 1739;
-    public final int LEATHER = 1741;
-    public final int LEATHER_NOTE = LEATHER + 1;
+    public int LEATHER = 1741;
+    public int LEATHER_NOTE = LEATHER + 1;
     public boolean restock = true;
     public final Location GE_LOCATION = Location.GE_AREA;
     public final Location COW_LOCATION = Location.COW_AREA;
@@ -88,6 +90,26 @@ public class Main extends TaskScript implements RenderListener {
     public int leatherPrice = 0;
     public int cowhidePrice = 0;
 
+    public void setHighestProfitLeather(){
+        Log.fine("Setting Most Profitable Leather");
+        int currLeather = LEATHER;
+        int currProfit = leatherPrice - cowhidePrice;
+
+        // switch to other leather
+        if (LEATHER == 1741){
+            LEATHER = 1743;
+        } else {
+            LEATHER = 1741;
+        }
+
+        setPrices();
+        if((leatherPrice - cowhidePrice) < currProfit)
+            LEATHER = currLeather;
+
+        LEATHER_NOTE = LEATHER + 1;
+        printLeather();
+    }
+
     public void setPrices() {
         {
             try {
@@ -101,11 +123,11 @@ public class Main extends TaskScript implements RenderListener {
                 //Fall-back prices
                 if (leatherPrice < 70) {
                     Log.info("Using fall-back leather price");
-                    leatherPrice = 70;
+                    leatherPrice = ExPriceChecker.getRSBuddyPrice(LEATHER, 70);
                 }
                 if (cowhidePrice < 50) {
                     Log.info("Using fall-back cowhide price");
-                    cowhidePrice = 50;
+                    cowhidePrice = ExPriceChecker.getRSBuddyPrice(COWHIDE, 150);
                 }
             }
         }
@@ -159,7 +181,8 @@ public class Main extends TaskScript implements RenderListener {
         String statsString = "Tanned: "
                 + stats[0]
                 + "  |  Total profit: " + stats[1]
-                + "  |  Hourly profit: " + stats[2];
+                + "  |  Hourly profit: " + stats[2]
+                + "  |  Amount muled: " + stats[3];
         Log.info(statsString);
     }
 
@@ -187,6 +210,7 @@ public class Main extends TaskScript implements RenderListener {
         int totalCowhideTanned = stats[0];
         int totalProfit = stats[1];
         int hourlyProfit = stats[2];
+        int amountMuled = stats[3];
 
         g.setFont(new Font("TimesRoman", Font.BOLD, 15));
 
@@ -195,6 +219,7 @@ public class Main extends TaskScript implements RenderListener {
         drawStringWithShadow(g, "Total Tanned: " + formatNumber.format(totalCowhideTanned), 8, 269 + adjustY, Color.WHITE);
         drawStringWithShadow(g, "Total Profit: " + formatNumber.format(totalProfit), 8, 294 + adjustY, Color.WHITE);
         drawStringWithShadow(g, "Profit/Hr: " + formatNumber.format(hourlyProfit), 8, 319 + adjustY, Color.WHITE);
+        drawStringWithShadow(g, "Amount Muled:  " + formatNumber.format(amountMuled), 8, 344 + adjustY, Color.WHITE);
     }
 
     private void drawStringWithShadow(Graphics g, String str, int x, int y, Color color) {
@@ -213,7 +238,8 @@ public class Main extends TaskScript implements RenderListener {
         return new int[] {
                 totalTanned,
                 totalProfit,
-                hourlyProfit
+                hourlyProfit,
+                amntMuled
         };
     }
 
@@ -230,6 +256,15 @@ public class Main extends TaskScript implements RenderListener {
         Log.fine("Cowhide");
     }
 
+    public void printLeather() {
+        if (LEATHER == 1741){
+            Log.fine("Leather");
+        }
+        if (LEATHER == 1743){
+            Log.fine("Hard Leather");
+        }
+    }
+
     public void checkTime() {
         long currTime = System.currentTimeMillis();
         elapsedSeconds = (int) ((currTime - startTime) / 1000);
@@ -239,6 +274,17 @@ public class Main extends TaskScript implements RenderListener {
         while(GrandExchange.isOpen() || GrandExchangeSetup.isOpen()) {
             InterfaceComponent X = Interfaces.getComponent(465, 2, 11);
             X.interact(ActionOpcodes.INTERFACE_ACTION);
+            Time.sleepUntil(() -> !GrandExchange.isOpen() && !GrandExchangeSetup.isOpen(), 5000);
+        }
+    }
+
+    public void teleportHome(){
+        Tabs.open(Tab.MAGIC);
+        Time.sleepUntil(() -> Tabs.isOpen(Tab.MAGIC), 5000);
+        if(Magic.canCast(Spell.Modern.HOME_TELEPORT)){
+            Log.fine("Teleporting Home");
+            Magic.cast(Spell.Modern.HOME_TELEPORT);
+            Time.sleep(20000);
         }
     }
 }

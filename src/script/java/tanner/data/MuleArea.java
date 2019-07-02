@@ -3,6 +3,7 @@ package script.java.tanner.data;
 import org.rspeer.runetek.api.movement.position.Area;
 
 public enum MuleArea {
+    COOKS_GUILD(Area.rectangular(3180, 3446, 3183, 3440)),
     AL_KHARID(Area.rectangular(3264, 3199, 3265, 3198)),
     GE_NE(Area.rectangular(3180, 3513, 3181, 3512)),
     GE_SE(Area.rectangular(3184, 3471, 3183, 3472)),

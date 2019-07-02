@@ -20,11 +20,6 @@ public class Banking {
 
         calcSpendAmount();
 
-        // Withdraw GP
-        Time.sleep(500, 1500);
-        Bank.withdrawAll(995);
-        Time.sleepUntil(() -> !Bank.contains(995), 5000);
-
         // Withdraw leathers to sell
         if (Bank.contains(main.LEATHER)) {
             Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);
@@ -54,11 +49,18 @@ public class Banking {
         main.setPrices();
 
         // Keep X gp for tanning
-        int tanningGp = main.gp / main.cowhidePrice;
+        int tanningGp;
+        if (main.LEATHER == 1741) {
+            tanningGp = main.gp / main.cowhidePrice;
+        } else {
+            tanningGp = (main.gp / main.cowhidePrice) * 3;
+        }
+
         main.gp -= tanningGp;
     }
 
     void openAndDepositAll() {
+        Log.fine("Depositing Inventory");
         while (!Bank.isOpen()) {
             Bank.open();
             Time.sleep(1000);

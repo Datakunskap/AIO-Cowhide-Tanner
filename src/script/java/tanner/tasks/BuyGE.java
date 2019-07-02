@@ -1,12 +1,13 @@
 package script.java.tanner.tasks;
 
+import org.rspeer.runetek.api.component.Bank;
+import org.rspeer.runetek.api.component.tab.*;
 import script.java.tanner.ExGrandExchange;
 import script.java.tanner.Main;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.GrandExchangeSetup;
-import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer;
@@ -56,28 +57,32 @@ public class BuyGE extends Task {
         }
 
         // sets quantity to buy
-        buyQuantity = main.gp / main.cowhidePrice;
+        buyQuantity = main.gp / (main.cowhidePrice + main.incBuyPrice);
 
         // Checks if done buying
         if (GrandExchange.getFirstActive() == null && (Inventory.contains(main.COWHIDE) || Inventory.contains(main.COWHIDE+1))) {
             if (Time.sleepUntil(() -> (Inventory.getCount(true, main.COWHIDE) +
                     Inventory.getCount(true, main.COWHIDE+1)) >= buyQuantity, 5000)) {
                 Log.fine("Done buying");
-                main.sold = false;
+                main.sold = true;
                 main.checkedBank = false;
                 main.restock = false;
                 main.closeGE();
                 main.startTime = System.currentTimeMillis();
-                main.buyPriceChng = false;
-                main.incBuyPrice = 0;
-                main.timesPriceChanged = 0;
-                // Handled manually
+                if (main.buyPriceChng) {
+                    main.incBuyPrice = main.incBuyPrice / (main.timesPriceChanged * main.intervalAmnt);
+                    main.buyPriceChng = false;
+                }
                 banking.openAndDepositAll();
+                Bank.close();
+                Time.sleepUntil(() -> !Bank.isOpen(), 5000);
+
+                main.teleportHome();
                 return 2000;
             }
         }
 
-        // Lowers quantity if some sold before price change
+        // Lowers quantity if some bought before price change
         if (main.buyPriceChng && (Inventory.contains(main.COWHIDE) || Inventory.contains(main.COWHIDE+1)))
             buyQuantity -= (Inventory.getCount(true, x -> x != null && x.getId() == main.COWHIDE) + Inventory.getCount(true, x -> x != null && x.getId() == main.COWHIDE+1));
 

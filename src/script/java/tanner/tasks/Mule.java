@@ -27,7 +27,7 @@ public class Mule extends Task {
     private static String Password = null;
     private boolean muleing = false;
     private int begWorld = -1;
-    private static final String MULE_FILE_PATH = Script.getDataDirectory() + "\\scat's mule.txt";
+    private static final String MULE_FILE_PATH = Script.getDataDirectory() + "\\mule.txt";
 
     private Main main;
 
