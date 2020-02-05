@@ -64,7 +64,7 @@ public class BuyGE extends Task {
             if (Time.sleepUntil(() -> (Inventory.getCount(true, main.COWHIDE) +
                     Inventory.getCount(true, main.COWHIDE+1)) >= buyQuantity, 5000)) {
                 Log.fine("Done buying");
-                main.sold = true;
+                main.sold = false;
                 main.checkedBank = false;
                 main.restock = false;
                 main.closeGE();
@@ -117,6 +117,15 @@ public class BuyGE extends Task {
             main.buyPriceChng = true;
             main.timesPriceChanged++;
         }
+
+        // Checks and handles stuck in setup
+        if (main.elapsedSeconds > (main.resetGeTime + 1) * 60 && GrandExchange.getFirstActive() == null && GrandExchangeSetup.isOpen()) {
+            GrandExchange.open(GrandExchange.View.OVERVIEW);
+            if (!Time.sleepUntil(() -> !GrandExchangeSetup.isOpen(), 5000)) {
+                main.closeGE();
+            }
+        }
+
         GrandExchange.collectAll();
         return 1000;
     }

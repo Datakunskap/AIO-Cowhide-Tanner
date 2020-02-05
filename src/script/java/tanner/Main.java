@@ -103,8 +103,10 @@ public class Main extends TaskScript implements RenderListener {
         }
 
         setPrices();
-        if((leatherPrice - cowhidePrice) < currProfit)
+        if ((LEATHER == 1741 && (leatherPrice - cowhidePrice) < currProfit) ||
+                (LEATHER == 1743 && (leatherPrice - cowhidePrice) - 3 < currProfit)) {
             LEATHER = currLeather;
+        }
 
         LEATHER_NOTE = LEATHER + 1;
         printLeather();

@@ -20,6 +20,11 @@ public class Banking {
 
         calcSpendAmount();
 
+        // Withdraw GP
+        Time.sleep(500, 1500);
+        Bank.withdrawAll(995);
+        Time.sleepUntil(() -> !Bank.contains(995), 5000);
+
         // Withdraw leathers to sell
         if (Bank.contains(main.LEATHER)) {
             Bank.setWithdrawMode(Bank.WithdrawMode.NOTE);

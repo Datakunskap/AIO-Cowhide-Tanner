@@ -126,6 +126,14 @@ public class SellGE extends Task {
             main.timesPriceChanged++;
         }
 
+        // Checks and handles stuck in setup
+        if (main.elapsedSeconds > (main.resetGeTime + 1) * 60 && GrandExchange.getFirstActive() == null && GrandExchangeSetup.isOpen()) {
+            GrandExchange.open(GrandExchange.View.OVERVIEW);
+            if (!Time.sleepUntil(() -> !GrandExchangeSetup.isOpen(), 5000)) {
+                main.closeGE();
+            }
+        }
+
         GrandExchange.collectAll();
         Keyboard.pressEnter();
         return 1000;
